@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">ApplicOS</string>
+    <string name="clock">Saat</string>
+    <string name="alarm">Alarm</string>
+    <string name="timer">Zamanlayıcı</string>
+    <string name="notes">Notlar</string>
+    <string name="pin_unpin">Tuttur / Çıkar</string>
+    <string name="delete">Sil</string>
+    <string name="new_note">Yeni not</string>
+    <string name="favourite_contacts">Favori Kişiler</string>
+    <string name="pinned_notes">Sabitlenen Notlar</string>
+    <string name="media">Medya</string>
+    <string name="contact">Kişi</string>
+    <string name="weather">Hava Durumu</string>
+    <string name="settings">Ayarlar</string>
+    <string name="system_wallpaper">Sistem duvar kağıdını kullan</string>
+    <string name="animate_option_title">Uygulamayı çalıştırırken veya durdururken animasyon göster</string>
+    <string name="info_location_perm">Konum izni gerekli</string>
+    <string name="info_internet_access">İnternet erişimi gerekli</string>
+</resources>

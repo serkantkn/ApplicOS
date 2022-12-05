@@ -1,0 +1,53 @@
+<?xml version="1.0" encoding="utf-8"?>
+<MotionScene 
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:motion="http://schemas.android.com/apk/res-auto">
+
+    <Transition
+        motion:constraintSetEnd="@+id/end"
+        motion:constraintSetStart="@id/start"
+        motion:duration="10000"
+        motion:autoTransition="animateToEnd">
+       <KeyFrameSet>
+           <KeyAttribute
+               motion:motionTarget="@+id/contactName"
+               motion:framePosition="10"
+               android:translationY="0dp" />
+           <KeyAttribute
+               motion:motionTarget="@+id/contactName"
+               motion:framePosition="20"
+               android:translationY="96dp" />
+           <KeyAttribute
+               motion:motionTarget="@+id/contactName"
+               motion:framePosition="45"
+               android:translationY="96dp" />
+           <KeyAttribute
+               motion:motionTarget="@+id/contactName"
+               motion:framePosition="55"
+               android:translationY="130dp" />
+           <KeyAttribute
+               motion:motionTarget="@+id/contactName"
+               motion:framePosition="95"
+               android:translationY="0dp" />
+           <KeyAttribute
+               motion:motionTarget="@+id/contactName"
+               motion:framePosition="85"
+               android:translationY="130dp" />
+       </KeyFrameSet>
+    </Transition>
+
+    <ConstraintSet android:id="@+id/start">
+    </ConstraintSet>
+
+    <ConstraintSet android:id="@+id/end">
+        <Constraint
+            android:id="@+id/contactName"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent" />
+    </ConstraintSet>
+    <Transition
+        motion:constraintSetStart="@+id/end"
+        motion:constraintSetEnd="@+id/start"
+        motion:autoTransition="animateToEnd"
+        motion:duration="100" />
+</MotionScene>

@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="primary">#1c242e</color>
+    <color name="primary_transparent">#801C242E</color>
+    <color name="primary_dark">#353f48</color>
+    <color name="primary_dark_transparent">#80353F48</color>
+    <color name="primary_darker">#4D5A67</color>
+    <color name="primary_darker_transparent">#804D5A67</color>
+    <color name="accent_purple_dark">#7859b7</color>
+    <color name="accent_purple_dark_transparent">#807859B7</color>
+    <color name="accent_purple_light">#9884c1</color>
+    <color name="accent_blue_dark">#36A5F0</color>
+    <color name="accent_blue_dark_transparent">#8036A5F0</color>
+    <color name="accent_blue_light">#A4DBFF</color>
+    <color name="accent_red_dark">#FE5276</color>
+    <color name="accent_red_dark_transparent">#80FE5276</color>
+    <color name="accent_red_light">#FE8D79</color>
+    <color name="primary_text">#ECECEC</color>
+    <color name="primary_text_reversed">#212121</color>
+    <color name="secondary_text">#B6B6B6</color>
+    <color name="secondary_text_light">#9E9E9E</color>
+    <color name="white">#FFFFFF</color>
+    <color name="input_background">#ECECEC</color>
+    <color name="icon_background">#20FFFFFF</color>
+    <color name="error">#B00020</color>
+    <color name="received_message_background">#090D16</color>
+    <color name="tab_icon_tint">#A698C1</color>
+    <color name="fav_contact_tint">#36A5F0</color>
+    <color name="widget_background">#80353F48</color>
+
+    <color name="note_color_1">#7859b7</color>
+    <color name="note_color_2">#36A5F0</color>
+    <color name="note_color_3">#FE5276</color>
+    <color name="note_color_4">#FFC107</color>
+    <color name="note_color_5">#009688</color>
+</resources>
