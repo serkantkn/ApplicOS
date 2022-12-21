@@ -1,4 +1,4 @@
-package com.serkantken.applicos.launcher;
+package com.serkantken.applicos.launcher.adapters;
 
 import android.app.Activity;
 import android.content.Context;

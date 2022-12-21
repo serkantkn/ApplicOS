@@ -1,33 +1,29 @@
 package com.serkantken.applicos.models;
 
+import android.graphics.drawable.Drawable;
+
 import java.io.Serializable;
 
 public class AppModel implements Serializable
 {
-    String appName, packageName;
-    int appIcon;
+    private String name, packageName;
+    private Drawable image;
 
-    public String getAppName() {
-        return appName;
+    public AppModel(String name, String packageName, Drawable image) {
+        this.name = name;
+        this.packageName = packageName;
+        this.image = image;
     }
 
-    public void setAppName(String appName) {
-        this.appName = appName;
+    public String getName() {
+        return name;
     }
 
     public String getPackageName() {
         return packageName;
     }
 
-    public void setPackageName(String packageName) {
-        this.packageName = packageName;
-    }
-
-    public int getAppIcon() {
-        return appIcon;
-    }
-
-    public void setAppIcon(int appIcon) {
-        this.appIcon = appIcon;
+    public Drawable getImage() {
+        return image;
     }
 }
