@@ -36,7 +36,7 @@ public class AppListFragment extends Fragment
         appList.sort(Comparator.comparing(AppModel::getName));
         binding.drawerGrid.setAdapter(new AppAdapter(requireContext(), requireActivity(), appList));
 
-        blur(binding.backblur, 10f, false);
+        blur(binding.backblur, 5f, false);
 
         return binding.getRoot();
     }

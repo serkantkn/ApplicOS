@@ -97,6 +97,7 @@
                             app:layout_constraintTop_toTopOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"
                             app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginTop="10dp"
                             android:layout_marginEnd="15dp"/>
 
                         <TextView
@@ -147,7 +148,7 @@
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:visibility="gone">
+                    android:visibility="visible">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -192,7 +193,7 @@
                             android:id="@+id/artistName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Stromae"
+                            android:text="Artist"
                             android:textColor="@color/white"
                             android:fontFamily="@font/jost_regular"
                             android:textSize="19sp"
@@ -205,7 +206,7 @@
                             android:id="@+id/songName"
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
-                            android:text="Batard"
+                            android:text="Track"
                             android:textColor="@color/white"
                             android:fontFamily="@font/jost_regular"
                             android:textSize="19sp"

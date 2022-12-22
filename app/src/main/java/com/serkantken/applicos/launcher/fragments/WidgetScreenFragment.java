@@ -282,7 +282,7 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(requireContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(requireContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
         });
         requestQueue.add(jsonObjectRequest);
     }

@@ -6,6 +6,7 @@ import android.app.WallpaperManager;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
@@ -25,6 +26,7 @@ import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.cardview.widget.CardView;
+import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
@@ -74,6 +76,17 @@ public class MainActivity extends AppCompatActivity {
         binding = ActivityMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        if (isEdgeToEdgeEnabled() == 0 || isEdgeToEdgeEnabled() == 1)
+        {
+            setMargins(binding.dockIcons, 0, 0, 0, 120);
+        }
+        else
+        {
+            setMargins(binding.dockIcons, 0, 0, 0, 30);
+        }
+
+        setMargins(binding.controlCenterContainer, 0, getStatusBarHeight(), 0, 0);
+
         blurViews(binding.dock);
         binding.pageViewer.setAdapter(new LauncherPageAdapter(MainActivity.this, 2));
 
@@ -116,6 +129,34 @@ public class MainActivity extends AppCompatActivity {
             ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, binding.clock, Objects.requireNonNull(ViewCompat.getTransitionName(binding.clock)));
             startActivity(intent, optionsCompat.toBundle());
         });
+    }
+
+    public void setMargins(View view, int start, int top, int end, int bottom)
+    {
+        if (view.getLayoutParams() instanceof ViewGroup.MarginLayoutParams) {
+            ViewGroup.MarginLayoutParams p = (ViewGroup.MarginLayoutParams) view.getLayoutParams();
+            p.setMargins(start, top, end, bottom);
+            view.requestLayout();
+        }
+    }
+
+    public int isEdgeToEdgeEnabled()
+    {
+        Resources resources = getResources();
+        int resourceId = resources.getIdentifier("config_navBarInteractionMode", "integer", "android");
+        if (resourceId > 0) {
+            return resources.getInteger(resourceId);
+        }
+        return 0;
+    }
+
+    public int getStatusBarHeight() {
+        int result = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if (resourceId > 0) {
+            result = getResources().getDimensionPixelSize(resourceId);
+        }
+        return result;
     }
 
     private void blurViews(BlurView... blurView) {

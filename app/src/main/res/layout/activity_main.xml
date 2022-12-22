@@ -189,14 +189,13 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:background="@drawable/dock_background"
-        app:layout_constraintBottom_toBottomOf="parent"
-        android:layout_marginStart="15dp"
-        android:layout_marginEnd="15dp"
-        android:layout_marginBottom="15dp">
+        app:layout_constraintBottom_toBottomOf="parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
+            android:layout_height="75dp"
+            android:id="@+id/dockIcons"
+            android:layout_marginBottom="25dp"
             android:paddingBottom="10dp"
             android:paddingTop="10dp">
 

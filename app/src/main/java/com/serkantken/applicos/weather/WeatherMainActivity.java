@@ -129,7 +129,7 @@ public class WeatherMainActivity extends AppCompatActivity {
                 e.printStackTrace();
             }
         }, error -> {
-            Toast.makeText(WeatherMainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+            //Toast.makeText(WeatherMainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
         });
         requestQueue.add(jsonObjectRequest);
     }
