@@ -42,7 +42,16 @@ public class SettingsDatabase
         editor.apply();
     }
 
-    private void editBooleanPreference(String preferenceName, String key, boolean value)
+    public void editLongPreference(String preferenceName, String key, int value)
+    {
+        sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
+        SharedPreferences.Editor editor = sharedPreferences.edit();
+
+        editor.putLong(key, value);
+        editor.apply();
+    }
+
+    public void editBooleanPreference(String preferenceName, String key, boolean value)
     {
         sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();
@@ -51,19 +60,25 @@ public class SettingsDatabase
         editor.apply();
     }
 
-    private String getStringPreference(String preferenceName, String key)
+    public String getStringPreference(String preferenceName, String key)
     {
         sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
         return sharedPreferences.getString(key, "null");
     }
 
-    private int getIntegerPreference(String preferenceName, String key)
+    public int getIntegerPreference(String preferenceName, String key)
     {
         sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
         return sharedPreferences.getInt(key, 0);
     }
 
-    private boolean getBooleanPreference(String preferenceName, String key)
+    public long getLongPreference(String preferenceName, String key)
+    {
+        sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
+        return sharedPreferences.getLong(key, 0);
+    }
+
+    public boolean getBooleanPreference(String preferenceName, String key)
     {
         sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
         return sharedPreferences.getBoolean(key, false);

@@ -5,8 +5,6 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:id="@+id/wallpaper"
-    android:transitionName="wallpaper"
-    android:background="@color/primary"
     tools:context=".weather.WeatherMainActivity">
 
     <eightbitlab.com.blurview.BlurView
@@ -26,7 +24,6 @@
                 android:layout_marginEnd="15dp"
                 android:background="@drawable/dock_background"
                 android:paddingBottom="5dp"
-                android:transitionName="weather"
                 app:layout_constraintTop_toTopOf="parent">
 
                 <androidx.constraintlayout.widget.ConstraintLayout
@@ -54,7 +51,6 @@
                         android:layout_height="wrap_content"
                         android:fontFamily="@font/jost_regular"
                         android:text="@string/weather"
-                        android:transitionName="weatherTitle"
                         android:textColor="@color/white"
                         android:textSize="20sp"
                         app:layout_constraintBottom_toBottomOf="parent"
@@ -85,7 +81,6 @@
                     android:gravity="center"
                     android:textColor="@color/white"
                     android:textSize="25sp"
-                    android:transitionName="cityName"
                     app:layout_constraintTop_toBottomOf="@id/toolbar" />
 
             </androidx.constraintlayout.widget.ConstraintLayout>
@@ -98,7 +93,6 @@
                 android:gravity="center"
                 android:textColor="@color/primary_text"
                 android:textSize="45sp"
-                android:transitionName="temperature"
                 app:layout_constraintBottom_toTopOf="@id/forecast"
                 app:layout_constraintTop_toBottomOf="@id/actionBar"
                 app:layout_constraintStart_toStartOf="parent"
@@ -113,7 +107,6 @@
                 android:gravity="center"
                 android:textColor="@color/primary_text"
                 android:textSize="30sp"
-                android:transitionName="condition"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintBottom_toTopOf="@id/weatherAnim"
@@ -127,8 +120,7 @@
                 app:layout_constraintBottom_toTopOf="@id/todaysWeatherRV"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/forecast"
-                android:transitionName="weatherIcon"/>
+                app:layout_constraintTop_toBottomOf="@id/forecast"/>
                 <!--
                 app:lottie_autoPlay="true"
                 app:lottie_loop="true"

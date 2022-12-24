@@ -1,20 +1,30 @@
 package com.serkantken.applicos.weather;
 
 import android.Manifest;
+import android.annotation.SuppressLint;
+import android.app.WallpaperManager;
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.drawable.Drawable;
 import android.location.Location;
 import android.location.LocationManager;
+import android.net.Uri;
+import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
+import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 import android.widget.Toast;
 
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
@@ -24,14 +34,17 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.serkantken.applicos.Constants;
 import com.serkantken.applicos.databinding.ActivityWeatherMainBinding;
 import com.serkantken.applicos.models.WeatherModel;
+import com.serkantken.applicos.settings.database.SettingsDatabase;
 import com.serkantken.applicos.weather.adapters.WeatherAdapter;
 
 import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
+import java.util.Date;
 
 import eightbitlab.com.blurview.BlurView;
 import eightbitlab.com.blurview.RenderScriptBlur;
@@ -49,6 +62,16 @@ public class WeatherMainActivity extends AppCompatActivity {
         binding = ActivityWeatherMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        if (checkStoragePermission())
+        {
+            getUserWallpaper();
+            blur(binding.blurBackground, 5f, false);
+        }
+        else
+        {
+            requestStoragePermission();
+        }
+
         weatherList = new ArrayList<>();
         adapter = new WeatherAdapter(this, weatherList);
         binding.todaysWeatherRV.setAdapter(adapter);
@@ -65,7 +88,8 @@ public class WeatherMainActivity extends AppCompatActivity {
             else
             {
                 Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-                getCityName("huDDBDMjxyOxG2pxZSauU0uxY2Gbgwxa", location.getLongitude(), location.getLatitude(), "tr-TR");
+                if (isOneHourPassed())
+                    getCityName(Constants.apiKey, location.getLongitude(), location.getLatitude(), Constants.lang);
             }
 
         }
@@ -74,6 +98,15 @@ public class WeatherMainActivity extends AppCompatActivity {
             e.printStackTrace();
         }
 
+    }
+
+    private boolean isOneHourPassed()
+    {
+        Long currentDate = new Date().getTime();
+        Long lastRefreshTime = SettingsDatabase.getInstance(this).getLongPreference("Weather", Constants.weatherRefreshTime);
+
+
+        return true;
     }
 
     private void getCityName(String apiKey, double longitude, double latitude, String lang)
@@ -149,6 +182,66 @@ public class WeatherMainActivity extends AppCompatActivity {
                 finish();
             }
         }
+    }
+
+    private boolean checkStoragePermission() {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            return Environment.isExternalStorageManager();
+        } else {
+            int write = ContextCompat.checkSelfPermission(this, Manifest.permission.WRITE_EXTERNAL_STORAGE);
+            int read = ContextCompat.checkSelfPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE);
+
+            return write == PackageManager.PERMISSION_GRANTED && read == PackageManager.PERMISSION_GRANTED;
+        }
+    }
+
+    private ActivityResultLauncher<Intent> storageActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+            if (Environment.isExternalStorageManager()) {
+                if (checkStoragePermission())
+                {
+                    getUserWallpaper();
+                }
+            }
+        }
+        else
+        {
+            if (checkStoragePermission())
+            {
+                getUserWallpaper();
+            }
+        }
+    });
+
+    private void requestStoragePermission()
+    {
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R)
+        {
+            try
+            {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_MANAGE_APP_ALL_FILES_ACCESS_PERMISSION);
+                Uri uri = Uri.fromParts("package", this.getPackageName(), null);
+                intent.setData(uri);
+                storageActivityResultLauncher.launch(intent);
+            }
+            catch (Exception e)
+            {
+                Intent intent = new Intent();
+                intent.setAction(Settings.ACTION_MANAGE_ALL_FILES_ACCESS_PERMISSION);
+                storageActivityResultLauncher.launch(intent);
+            }
+        }
+        else
+        {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
+        }
+    }
+
+    private void getUserWallpaper() {
+        WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
+        @SuppressLint("MissingPermission") Drawable wallpaperDrawable = wallpaperManager.getDrawable();
+        binding.wallpaper.setBackground(wallpaperDrawable);
     }
 
     public void blur(BlurView view, float radius, boolean isRounded)

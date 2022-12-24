@@ -36,6 +36,7 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.serkantken.applicos.Constants;
 import com.serkantken.applicos.clockalarm.ClockMainActivity;
 import com.serkantken.applicos.databinding.FragmentWidgetScreenBinding;
 import com.serkantken.applicos.launcher.MainActivity;
@@ -71,9 +72,6 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
     private Location location;
     private LocationManager locationManager;
 
-    private static final String apiKey = "huDDBDMjxyOxG2pxZSauU0uxY2Gbgwxa";
-    private static final String lang = "tr-TR";
-
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
@@ -102,7 +100,7 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
             ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
         } else {
             location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            setWeatherWidget(apiKey, location.getLongitude(), location.getLatitude(), lang);
+            setWeatherWidget(Constants.apiKey, location.getLongitude(), location.getLatitude(), Constants.lang);
         }
 
         binding.notesTitle.setOnClickListener(v -> {
@@ -117,17 +115,11 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
             if (binding.textWarning.getVisibility() == View.GONE)
             {
                 Intent intent = new Intent(requireContext(), WeatherMainActivity.class);
-                ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(requireActivity(),
-                        new Pair<>(binding.weatherContainer, "weather"),
-                        new Pair<>(binding.iconForecast, "weatherIcon"),
-                        new Pair<>(binding.temperature, "temperature"),
-                        new Pair<>(binding.weatherTitle, "cityName"),
-                        new Pair<>(binding.condition, "condition"));
-                startActivity(intent, optionsCompat.toBundle());
+                startActivity(intent);
             }
             else
             {
-                setWeatherWidget(apiKey, location.getLongitude(), location.getLatitude(), lang);
+                setWeatherWidget(Constants.apiKey, location.getLongitude(), location.getLatitude(), Constants.lang);
             }
         });
         return binding.getRoot();
@@ -306,6 +298,6 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         super.onResume();
         loadNotesWidget();
         getFavouriteContacts();
-        setWeatherWidget(apiKey, location.getLongitude(), location.getLatitude(), lang);
+        //setWeatherWidget(Constants.apiKey, location.getLongitude(), location.getLatitude(), Constants.lang);
     }
 }
