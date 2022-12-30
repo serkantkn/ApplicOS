@@ -7,178 +7,188 @@
     android:id="@+id/wallpaper"
     android:transitionName="wallpaper"
     android:background="@mipmap/wall1"
+    android:fitsSystemWindows="false"
     tools:context=".launcher.MainActivity">
 
     <androidx.viewpager2.widget.ViewPager2
         android:layout_width="match_parent"
         android:layout_height="match_parent"
+        android:fitsSystemWindows="false"
         android:id="@+id/pageViewer"/>
 
     <androidx.constraintlayout.widget.ConstraintLayout
-        android:id="@+id/controlCenterContainer"
         android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/control_center_background"
+        android:layout_height="0dp"
         app:layout_constraintTop_toTopOf="parent"
-        android:layout_marginTop="25dp"
-        android:padding="10dp">
+        app:layout_constraintBottom_toTopOf="@id/dock"
+        android:fitsSystemWindows="true">
 
-        <com.makeramen.roundedimageview.RoundedImageView
-            android:id="@+id/profileImage"
-            android:layout_width="50dp"
-            android:layout_height="50dp"
-            android:src="@mipmap/ic_launcher"
-            app:riv_corner_radius="15dp"
-            android:scaleType="centerCrop"
-            android:layout_marginStart="5dp"
+        <androidx.constraintlayout.widget.ConstraintLayout
+            android:id="@+id/controlCenterContainer"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@drawable/control_center_background"
             app:layout_constraintTop_toTopOf="parent"
-            app:layout_constraintStart_toStartOf="parent"/>
+            android:padding="10dp">
 
-        <TextClock
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/clock"
-            android:textColor="@color/white"
-            android:shadowColor="@color/secondary_text"
-            android:shadowRadius="3"
-            android:textSize="30sp"
-            android:fontFamily="@font/jost_medium"
-            android:format24Hour="HH:mm"
-            android:format12Hour="h:mm aa"
-            android:transitionName="clock"
-            app:layout_constraintStart_toEndOf="@id/profileImage"
-            app:layout_constraintTop_toTopOf="@id/profileImage"
-            app:layout_constraintBottom_toBottomOf="@id/profileImage"
-            android:layout_marginStart="10dp"/>
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:id="@+id/username"
-            android:text="Serkan Tiken"
-            android:textColor="@color/white"
-            android:shadowColor="@color/secondary_text"
-            android:shadowRadius="3"
-            android:textSize="30sp"
-            android:fontFamily="@font/jost_regular"
-            app:layout_constraintStart_toEndOf="@id/profileImage"
-            app:layout_constraintTop_toTopOf="@id/profileImage"
-            app:layout_constraintBottom_toBottomOf="@id/profileImage"
-            android:layout_marginStart="10dp"
-            android:visibility="gone"/>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:minWidth="350dp"
-            android:maxWidth="700dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/brightnessContainer"
-            app:layout_constraintTop_toBottomOf="@id/profileImage"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/iconLowBrightness"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_brightness_low"
-                app:tint="@color/primary_darker"
-                app:layout_constraintStart_toStartOf="parent"
+            <com.makeramen.roundedimageview.RoundedImageView
+                android:id="@+id/profileImage"
+                android:layout_width="50dp"
+                android:layout_height="50dp"
+                android:src="@mipmap/ic_launcher"
+                app:riv_corner_radius="15dp"
+                android:scaleType="centerCrop"
+                android:layout_marginStart="5dp"
                 app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                android:layout_marginTop="10dp"/>
+                app:layout_constraintStart_toStartOf="parent"/>
 
-            <SeekBar
-                android:id="@+id/brightnessSeekbar"
-                android:layout_width="0dp"
+            <TextClock
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/iconLowBrightness"
-                app:layout_constraintEnd_toStartOf="@id/iconHighBrightness"
-                app:layout_constraintTop_toTopOf="@id/iconLowBrightness"
-                app:layout_constraintBottom_toBottomOf="@id/iconLowBrightness"
-                app:layout_constraintHorizontal_chainStyle="packed"/>
+                android:id="@+id/clock"
+                android:textColor="@color/white"
+                android:shadowColor="@color/secondary_text"
+                android:shadowRadius="3"
+                android:textSize="30sp"
+                android:fontFamily="@font/jost_medium"
+                android:format24Hour="HH:mm"
+                android:format12Hour="h:mm aa"
+                android:transitionName="clock"
+                app:layout_constraintStart_toEndOf="@id/profileImage"
+                app:layout_constraintTop_toTopOf="@id/profileImage"
+                app:layout_constraintBottom_toBottomOf="@id/profileImage"
+                android:layout_marginStart="10dp"/>
 
-            <ImageView
-                android:id="@+id/iconHighBrightness"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_brightness_high"
-                app:tint="@color/primary_darker"
-                app:layout_constraintEnd_toStartOf="@id/iconAutoBrightness"
-                app:layout_constraintTop_toTopOf="@id/iconLowBrightness"
-                app:layout_constraintHorizontal_chainStyle="packed"/>
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:id="@+id/username"
+                android:text="Serkan Tiken"
+                android:textColor="@color/white"
+                android:shadowColor="@color/secondary_text"
+                android:shadowRadius="3"
+                android:textSize="30sp"
+                android:fontFamily="@font/jost_regular"
+                app:layout_constraintStart_toEndOf="@id/profileImage"
+                app:layout_constraintTop_toTopOf="@id/profileImage"
+                app:layout_constraintBottom_toBottomOf="@id/profileImage"
+                android:layout_marginStart="10dp"
+                android:visibility="gone"/>
 
-            <ImageView
-                android:id="@+id/iconAutoBrightness"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_brightness_auto"
-                app:tint="@color/primary_darker"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/iconLowBrightness"
-                app:layout_constraintHorizontal_chainStyle="packed"/>
-
-        </androidx.constraintlayout.widget.ConstraintLayout>
-
-        <androidx.constraintlayout.widget.ConstraintLayout
-            android:layout_width="0dp"
-            android:minWidth="350dp"
-            android:maxWidth="700dp"
-            android:layout_height="wrap_content"
-            android:id="@+id/volumeContainer"
-            app:layout_constraintTop_toBottomOf="@id/brightnessContainer"
-            app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintEnd_toEndOf="parent"
-            android:layout_marginStart="30dp"
-            android:layout_marginEnd="30dp"
-            android:visibility="gone">
-
-            <ImageView
-                android:id="@+id/iconLowVolume"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_volume_mute"
-                app:tint="@color/primary_darker"
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:minWidth="350dp"
+                android:maxWidth="700dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/brightnessContainer"
+                app:layout_constraintTop_toBottomOf="@id/profileImage"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toStartOf="@id/volumeSeekbar"
-                app:layout_constraintTop_toTopOf="parent"
-                app:layout_constraintHorizontal_chainStyle="packed"
-                android:layout_marginTop="10dp"/>
-
-            <SeekBar
-                android:id="@+id/volumeSeekbar"
-                android:layout_width="0dp"
-                android:layout_height="wrap_content"
-                app:layout_constraintStart_toEndOf="@id/iconLowVolume"
-                app:layout_constraintEnd_toStartOf="@id/iconHighVolume"
-                app:layout_constraintTop_toTopOf="@id/iconLowVolume"
-                app:layout_constraintBottom_toBottomOf="@id/iconLowVolume"
-                app:layout_constraintHorizontal_chainStyle="packed"/>
-
-            <ImageView
-                android:id="@+id/iconHighVolume"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_volume_up"
-                app:tint="@color/primary_darker"
-                app:layout_constraintStart_toEndOf="@id/volumeSeekbar"
-                app:layout_constraintEnd_toStartOf="@id/iconMuteVolume"
-                app:layout_constraintTop_toTopOf="@id/iconLowVolume"
-                app:layout_constraintHorizontal_chainStyle="packed"/>
-
-            <ImageView
-                android:id="@+id/iconMuteVolume"
-                android:layout_width="35dp"
-                android:layout_height="35dp"
-                android:src="@drawable/ic_volume_off"
-                app:tint="@color/primary_darker"
-                app:layout_constraintStart_toEndOf="@id/iconHighVolume"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toTopOf="@id/iconLowVolume"
-                app:layout_constraintHorizontal_chainStyle="packed"/>
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iconLowBrightness"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/ic_brightness_low"
+                    app:tint="@color/primary_darker"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    android:layout_marginTop="10dp"/>
+
+                <SeekBar
+                    android:id="@+id/brightnessSeekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toEndOf="@id/iconLowBrightness"
+                    app:layout_constraintEnd_toStartOf="@id/iconHighBrightness"
+                    app:layout_constraintTop_toTopOf="@id/iconLowBrightness"
+                    app:layout_constraintBottom_toBottomOf="@id/iconLowBrightness"
+                    app:layout_constraintHorizontal_chainStyle="packed"/>
+
+                <ImageView
+                    android:id="@+id/iconHighBrightness"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/ic_brightness_high"
+                    app:tint="@color/primary_darker"
+                    app:layout_constraintEnd_toStartOf="@id/iconAutoBrightness"
+                    app:layout_constraintTop_toTopOf="@id/iconLowBrightness"
+                    app:layout_constraintHorizontal_chainStyle="packed"/>
+
+                <ImageView
+                    android:id="@+id/iconAutoBrightness"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/ic_brightness_auto"
+                    app:tint="@color/primary_darker"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iconLowBrightness"
+                    app:layout_constraintHorizontal_chainStyle="packed"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
+
+            <androidx.constraintlayout.widget.ConstraintLayout
+                android:layout_width="0dp"
+                android:minWidth="350dp"
+                android:maxWidth="700dp"
+                android:layout_height="wrap_content"
+                android:id="@+id/volumeContainer"
+                app:layout_constraintTop_toBottomOf="@id/brightnessContainer"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:layout_marginStart="30dp"
+                android:layout_marginEnd="30dp"
+                android:visibility="gone">
+
+                <ImageView
+                    android:id="@+id/iconLowVolume"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/ic_volume_mute"
+                    app:tint="@color/primary_darker"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toStartOf="@id/volumeSeekbar"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintHorizontal_chainStyle="packed"
+                    android:layout_marginTop="10dp"/>
+
+                <SeekBar
+                    android:id="@+id/volumeSeekbar"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    app:layout_constraintStart_toEndOf="@id/iconLowVolume"
+                    app:layout_constraintEnd_toStartOf="@id/iconHighVolume"
+                    app:layout_constraintTop_toTopOf="@id/iconLowVolume"
+                    app:layout_constraintBottom_toBottomOf="@id/iconLowVolume"
+                    app:layout_constraintHorizontal_chainStyle="packed"/>
+
+                <ImageView
+                    android:id="@+id/iconHighVolume"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/ic_volume_up"
+                    app:tint="@color/primary_darker"
+                    app:layout_constraintStart_toEndOf="@id/volumeSeekbar"
+                    app:layout_constraintEnd_toStartOf="@id/iconMuteVolume"
+                    app:layout_constraintTop_toTopOf="@id/iconLowVolume"
+                    app:layout_constraintHorizontal_chainStyle="packed"/>
+
+                <ImageView
+                    android:id="@+id/iconMuteVolume"
+                    android:layout_width="35dp"
+                    android:layout_height="35dp"
+                    android:src="@drawable/ic_volume_off"
+                    app:tint="@color/primary_darker"
+                    app:layout_constraintStart_toEndOf="@id/iconHighVolume"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="@id/iconLowVolume"
+                    app:layout_constraintHorizontal_chainStyle="packed"/>
+
+            </androidx.constraintlayout.widget.ConstraintLayout>
 
         </androidx.constraintlayout.widget.ConstraintLayout>
 

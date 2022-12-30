@@ -54,7 +54,8 @@ public class WeatherMainActivity extends AppCompatActivity {
     private ArrayList<WeatherModel> weatherList;
     private WeatherAdapter adapter;
     private LocationManager locationManager;
-    private static int LOCATION_REQUEST_CODE = 1;
+    private static final int LOCATION_REQUEST_CODE = 1;
+    private SettingsDatabase settingsDatabase;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,10 +63,15 @@ public class WeatherMainActivity extends AppCompatActivity {
         binding = ActivityWeatherMainBinding.inflate(getLayoutInflater());
         setContentView(binding.getRoot());
 
+        settingsDatabase = SettingsDatabase.getInstance(this);
+
+        binding.buttonBack.setOnClickListener(v -> onBackPressed());
+
         if (checkStoragePermission())
         {
             getUserWallpaper();
             blur(binding.blurBackground, 5f, false);
+            blur(binding.actionBar, 10f, true);
         }
         else
         {
@@ -118,16 +124,16 @@ public class WeatherMainActivity extends AppCompatActivity {
         JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
             try {
                 String key = response.getString("Key");
-                binding.cityName.setText(response.getString("LocalizedName"));
+                String cityName = response.getString("LocalizedName");
+                binding.cityName.setText(cityName);
+                settingsDatabase.editStringPreference(Constants.weatherPrefName, Constants.weather_cityName, cityName);
                 getWeatherInfo(apiKey, key, lang);
             }
             catch (JSONException e)
             {
                 e.printStackTrace();
             }
-        }, error -> {
-            binding.forecast.setText(error.getMessage());
-        });
+        }, error -> binding.forecast.setText(error.getMessage()));
         requestQueue.add(jsonObjectRequest);
     }
 
@@ -141,11 +147,18 @@ public class WeatherMainActivity extends AppCompatActivity {
             try
             {
                 JSONObject jsonObject = response.getJSONObject(0);
-                binding.forecast.setText(jsonObject.getString("IconPhrase"));
-                binding.temperature.setText(String.format("%s °C", jsonObject.getJSONObject("Temperature").getDouble("Value")));
+
+                String forecast = jsonObject.getString("IconPhrase");
+                binding.forecast.setText(forecast);
+                settingsDatabase.editStringPreference(Constants.weatherPrefName, Constants.weather_condition, forecast);
+
+                String temperature = String.format("%s °C", jsonObject.getJSONObject("Temperature").getDouble("Value"));
+                binding.temperature.setText(temperature);
+                settingsDatabase.editStringPreference(Constants.weatherPrefName, Constants.weather_temperature, temperature);
+
                 int iconNo = jsonObject.getInt("WeatherIcon");
                 String eleman = String.valueOf(iconNo);
-                String icon = "";
+                String icon;
                 if (eleman.length() == 2)
                 {
                     icon = "https://developer.accuweather.com/sites/default/files/"+eleman+"-s.png";
@@ -155,7 +168,7 @@ public class WeatherMainActivity extends AppCompatActivity {
                     icon = "https://developer.accuweather.com/sites/default/files/0"+eleman+"-s.png";
                 }
                 Glide.with(this).load(icon).into(binding.weatherAnim);
-
+                settingsDatabase.editStringPreference(Constants.weatherPrefName, Constants.weather_icon, icon);
             }
             catch (JSONException e)
             {
@@ -195,7 +208,7 @@ public class WeatherMainActivity extends AppCompatActivity {
         }
     }
 
-    private ActivityResultLauncher<Intent> storageActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+    private final ActivityResultLauncher<Intent> storageActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (Environment.isExternalStorageManager()) {
                 if (checkStoragePermission())

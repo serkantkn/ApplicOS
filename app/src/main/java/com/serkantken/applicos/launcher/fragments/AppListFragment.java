@@ -9,6 +9,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
 
+import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
 
 import com.serkantken.applicos.databinding.FragmentAppListBinding;
@@ -28,13 +29,13 @@ public class AppListFragment extends Fragment
     private List<AppModel> appList;
 
     @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+    public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         binding = FragmentAppListBinding.inflate(inflater, container, false);
 
         appList = getInstalledApps();
         appList.sort(Comparator.comparing(AppModel::getName));
-        binding.drawerGrid.setAdapter(new AppAdapter(requireContext(), requireActivity(), appList));
+        binding.drawerGrid.setAdapter(new AppAdapter(requireContext(), appList));
 
         blur(binding.backblur, 5f, false);
 

@@ -76,15 +76,14 @@
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:id="@+id/textWarning"
-                            android:text="@string/info_location_perm"
+                            android:text="@string/touch_to_get_weather"
                             android:textColor="@color/white"
                             android:textSize="17sp"
                             android:gravity="center"
                             app:layout_constraintTop_toBottomOf="@id/iconWeather"
                             app:layout_constraintBottom_toBottomOf="parent"
                             app:layout_constraintStart_toStartOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
-                            android:visibility="gone"/>
+                            app:layout_constraintEnd_toEndOf="parent"/>
 
                         <ImageView
                             android:layout_width="85dp"

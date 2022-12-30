@@ -37,6 +37,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.serkantken.applicos.Constants;
+import com.serkantken.applicos.R;
 import com.serkantken.applicos.clockalarm.ClockMainActivity;
 import com.serkantken.applicos.databinding.FragmentWidgetScreenBinding;
 import com.serkantken.applicos.launcher.MainActivity;
@@ -47,6 +48,7 @@ import com.serkantken.applicos.notes.NotesClickListener;
 import com.serkantken.applicos.notes.NotesMainActivity;
 import com.serkantken.applicos.notes.adapters.NotesListAdapter;
 import com.serkantken.applicos.notes.database.RoomDB;
+import com.serkantken.applicos.settings.database.SettingsDatabase;
 import com.serkantken.applicos.telephone.database.ContactsDB;
 import com.serkantken.applicos.weather.WeatherMainActivity;
 
@@ -69,16 +71,14 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
     private ContactsDB contactsDatabase;
     private List<NotesModel> notes = new ArrayList<>();
     private List<ContactModel> contacts = new ArrayList<>();
-    private Location location;
-    private LocationManager locationManager;
+    private SettingsDatabase settingsDatabase;
 
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         binding = FragmentWidgetScreenBinding.inflate(inflater, container, false);
 
-        locationManager = (LocationManager) requireContext().getSystemService(Context.LOCATION_SERVICE);
-
+        settingsDatabase = SettingsDatabase.getInstance(requireContext());
         blurViews(binding.weatherContainer, binding.mediaContainer, binding.notesContainer, binding.contactsContainer);
 
         //SwipeRefreshLayout yükleme diskini kaldırma
@@ -95,13 +95,7 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
 
         loadNotesWidget();
         getFavouriteContacts();
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
-        } else {
-            location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
-            setWeatherWidget(Constants.apiKey, location.getLongitude(), location.getLatitude(), Constants.lang);
-        }
+        setWeatherWidget();
 
         binding.notesTitle.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), NotesMainActivity.class);
@@ -112,16 +106,10 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         binding.iconAdd.setOnClickListener(v -> addNote());
 
         binding.weatherContainer.setOnClickListener(v -> {
-            if (binding.textWarning.getVisibility() == View.GONE)
-            {
-                Intent intent = new Intent(requireContext(), WeatherMainActivity.class);
-                startActivity(intent);
-            }
-            else
-            {
-                setWeatherWidget(Constants.apiKey, location.getLongitude(), location.getLatitude(), Constants.lang);
-            }
+            Intent intent = new Intent(requireContext(), WeatherMainActivity.class);
+            startActivity(intent);
         });
+
         return binding.getRoot();
     }
 
@@ -212,71 +200,21 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         }
     }
 
-    private void setWeatherWidget(String apiKey, double longitude, double latitude, String lang)
+    private void setWeatherWidget()
     {
-        if (ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
-                && ActivityCompat.checkSelfPermission(requireContext(), Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)
+        if (!Objects.equals(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_temperature), "null"))
         {
-            ActivityCompat.requestPermissions(requireActivity(), new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, 2);
+            binding.weatherTitle.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_cityName));
+            binding.condition.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_condition));
+            binding.temperature.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_temperature));
+            Glide.with(this).load(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_icon)).into(binding.iconForecast);
+            binding.textWarning.setVisibility(View.GONE);
         }
         else
         {
-            String url = "https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey="+apiKey+"&q="+latitude+"%2C%20"+longitude+"&language="+lang;
-
-            RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
-
-            JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
-                try {
-                    String key = response.getString("Key");
-                    binding.weatherTitle.setText(response.getString("LocalizedName"));
-                    getWeatherInfo(apiKey, key, lang);
-                }
-                catch (JSONException e)
-                {
-                    e.printStackTrace();
-                }
-            }, error -> {
-                binding.textWarning.setText(error.getMessage());
-                binding.textWarning.setVisibility(View.VISIBLE);
-            });
-            requestQueue.add(jsonObjectRequest);
+            binding.weatherTitle.setText(getString(R.string.weather));
+            binding.textWarning.setVisibility(View.VISIBLE);
         }
-    }
-
-    private void getWeatherInfo (String apiKey, String cityName, String lang)
-    {
-        String url = "https://dataservice.accuweather.com/forecasts/v1/hourly/1hour/"+cityName+"?apikey="+apiKey+"&language="+lang+"&details=true&metric=true";
-
-        RequestQueue requestQueue = Volley.newRequestQueue(requireContext());
-
-        JsonArrayRequest jsonObjectRequest = new JsonArrayRequest(Request.Method.GET, url, null, response -> {
-            try
-            {
-                JSONObject jsonObject = response.getJSONObject(0);
-                binding.condition.setText(jsonObject.getString("IconPhrase"));
-                binding.temperature.setText(String.format("%s °C", jsonObject.getJSONObject("Temperature").getDouble("Value")));
-                int iconNo = jsonObject.getInt("WeatherIcon");
-                String eleman = String.valueOf(iconNo);
-                String icon = "";
-                if (eleman.length() == 2)
-                {
-                    icon = "https://developer.accuweather.com/sites/default/files/"+eleman+"-s.png";
-                }
-                else
-                {
-                    icon = "https://developer.accuweather.com/sites/default/files/0"+eleman+"-s.png";
-                }
-                Glide.with(this).load(icon).into(binding.iconForecast);
-
-            }
-            catch (JSONException e)
-            {
-                e.printStackTrace();
-            }
-        }, error -> {
-            //Toast.makeText(requireContext(), error.getMessage(), Toast.LENGTH_SHORT).show();
-        });
-        requestQueue.add(jsonObjectRequest);
     }
 
     @Override
@@ -298,6 +236,6 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         super.onResume();
         loadNotesWidget();
         getFavouriteContacts();
-        //setWeatherWidget(Constants.apiKey, location.getLongitude(), location.getLatitude(), Constants.lang);
+        setWeatherWidget();
     }
 }

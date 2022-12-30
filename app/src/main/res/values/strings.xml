@@ -19,4 +19,5 @@
     <string name="animate_option_title">Animate when starting or exitting apps</string>
     <string name="info_location_perm">Location permission is required</string>
     <string name="info_internet_access">Internet access is required</string>
+    <string name="touch_to_get_weather">Touch here to get weather forecast</string>
 </resources>

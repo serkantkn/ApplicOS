@@ -82,10 +82,9 @@ public class MainActivity extends AppCompatActivity {
         }
         else
         {
-            setMargins(binding.dockIcons, 0, 0, 0, 30);
+            setMargins(binding.dockIcons, 0, 0, 0, 70);
         }
-
-        setMargins(binding.controlCenterContainer, 0, getStatusBarHeight(), 0, 0);
+        getWindow().setNavigationBarColor(ContextCompat.getColor(MainActivity.this, android.R.color.transparent));
 
         blurViews(binding.dock);
         binding.pageViewer.setAdapter(new LauncherPageAdapter(MainActivity.this, 2));
@@ -180,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    private ActivityResultLauncher<Intent> storageActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
+    private final ActivityResultLauncher<Intent> storageActivityResultLauncher = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), result -> {
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             if (Environment.isExternalStorageManager()) {
                 if (checkStoragePermission())

@@ -3,7 +3,6 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
     tools:context=".launcher.fragments.AppListFragment">
 
     <eightbitlab.com.blurview.BlurView
@@ -17,10 +16,12 @@
         android:layout_height="wrap_content"
         android:id="@+id/drawerGrid"
         android:numColumns="2"
+        android:paddingTop="85dp"
+        android:paddingBottom="110dp"
+        android:clipToPadding="false"
         android:stretchMode="columnWidth"
         android:layout_marginStart="5dp"
         android:layout_marginEnd="5dp"
-        android:layout_marginTop="85dp"
         android:scrollbars="none"/>
 
 </FrameLayout>
