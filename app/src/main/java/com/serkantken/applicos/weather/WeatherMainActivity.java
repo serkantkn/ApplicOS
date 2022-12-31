@@ -35,6 +35,7 @@ import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.serkantken.applicos.Constants;
+import com.serkantken.applicos.Utils;
 import com.serkantken.applicos.databinding.ActivityWeatherMainBinding;
 import com.serkantken.applicos.models.WeatherModel;
 import com.serkantken.applicos.settings.database.SettingsDatabase;
@@ -66,12 +67,13 @@ public class WeatherMainActivity extends AppCompatActivity {
         settingsDatabase = SettingsDatabase.getInstance(this);
 
         binding.buttonBack.setOnClickListener(v -> onBackPressed());
+        Utils utils = new Utils(this, this);
 
         if (checkStoragePermission())
         {
             getUserWallpaper();
-            blur(binding.blurBackground, 5f, false);
-            blur(binding.actionBar, 10f, true);
+            utils.blur(binding.blurBackground, 5f, false);
+            utils.blur(binding.actionBar, 10f, true);
         }
         else
         {
@@ -255,26 +257,5 @@ public class WeatherMainActivity extends AppCompatActivity {
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
         @SuppressLint("MissingPermission") Drawable wallpaperDrawable = wallpaperManager.getDrawable();
         binding.wallpaper.setBackground(wallpaperDrawable);
-    }
-
-    public void blur(BlurView view, float radius, boolean isRounded)
-    {
-        View decorView = getWindow().getDecorView();
-        //ViewGroup you want to start blur from. Choose root as close to BlurView in hierarchy as possible.
-        ViewGroup rootView = (ViewGroup) decorView.findViewById(android.R.id.content);
-        //Set drawable to draw in the beginning of each blurred frame (Optional).
-        //Can be used in case your layout has a lot of transparent space and your content
-        //gets kinda lost after after blur is applied.
-        Drawable windowBackground = decorView.getBackground();
-
-        view.setupWith(rootView, new RenderScriptBlur(this))
-                .setFrameClearDrawable(windowBackground)
-                .setBlurRadius(radius)
-                .setBlurAutoUpdate(true);
-        if (isRounded)
-        {
-            view.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
-            view.setClipToOutline(true);
-        }
     }
 }

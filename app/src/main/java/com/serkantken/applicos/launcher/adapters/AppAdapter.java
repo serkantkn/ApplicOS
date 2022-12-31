@@ -3,16 +3,70 @@ package com.serkantken.applicos.launcher.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
-import android.widget.BaseAdapter;
+
+import androidx.annotation.NonNull;
+import androidx.recyclerview.widget.RecyclerView;
 
 import com.serkantken.applicos.databinding.AppIconItemBinding;
 import com.serkantken.applicos.models.AppModel;
 
 import java.util.List;
 
-public class AppAdapter extends BaseAdapter
+public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>
+{
+    private final Context context;
+    private final List<AppModel> appList;
+
+    public AppAdapter(Context context, List<AppModel> appList)
+    {
+        this.context = context;
+        this.appList = appList;
+    }
+
+    @NonNull
+    @Override
+    public ViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType)
+    {
+        return new ViewHolder(AppIconItemBinding.inflate(LayoutInflater.from(context),
+                parent,
+                false));
+    }
+
+    @Override
+    public void onBindViewHolder(@NonNull ViewHolder holder, int position)
+    {
+        holder.binding.appIcon.setImageDrawable(appList.get(position).getImage());
+        holder.binding.appTitle.setText(appList.get(position).getName());
+
+        holder.binding.appIconContainer.setOnClickListener(view1 -> {
+            Intent launchAppIntent = context.getPackageManager().getLaunchIntentForPackage(appList.get(position).getPackageName());
+            if (launchAppIntent != null)
+            {
+                context.startActivity(launchAppIntent);
+            }
+        });
+    }
+
+    @Override
+    public int getItemCount()
+    {
+        return appList.size();
+    }
+
+    public static class ViewHolder extends RecyclerView.ViewHolder
+    {
+        AppIconItemBinding binding;
+
+        public ViewHolder(@NonNull AppIconItemBinding itemView) {
+            super(itemView.getRoot());
+            binding = itemView;
+        }
+    }
+}
+
+
+/*BaseAdapter
 {
     private final Context context;
     private final List<AppModel> appList;
@@ -53,4 +107,4 @@ public class AppAdapter extends BaseAdapter
 
         return binding.getRoot();
     }
-}
+}*/

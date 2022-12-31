@@ -11,7 +11,9 @@ import android.view.ViewOutlineProvider;
 
 import androidx.annotation.NonNull;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.serkantken.applicos.Utils;
 import com.serkantken.applicos.databinding.FragmentAppListBinding;
 import com.serkantken.applicos.launcher.adapters.AppAdapter;
 import com.serkantken.applicos.models.AppModel;
@@ -35,9 +37,11 @@ public class AppListFragment extends Fragment
 
         appList = getInstalledApps();
         appList.sort(Comparator.comparing(AppModel::getName));
+        binding.drawerGrid.setLayoutManager(new StaggeredGridLayoutManager(2, StaggeredGridLayoutManager.VERTICAL));
         binding.drawerGrid.setAdapter(new AppAdapter(requireContext(), appList));
 
-        blur(binding.backblur, 5f, false);
+        Utils utils = new Utils(requireActivity(), requireContext());
+        utils.blur(binding.backblur, 5f, false);
 
         return binding.getRoot();
     }
@@ -62,20 +66,5 @@ public class AppListFragment extends Fragment
             }
         }
         return list;
-    }
-
-    public void blur(BlurView view, float radius, boolean isRounded) {
-        View decorView = requireActivity().getWindow().getDecorView();
-        ViewGroup rootView = decorView.findViewById(android.R.id.content);
-        Drawable windowBackground = decorView.getBackground();
-
-        view.setupWith(rootView, new RenderScriptBlur(requireContext()))
-                .setFrameClearDrawable(windowBackground)
-                .setBlurRadius(radius)
-                .setBlurAutoUpdate(true);
-        if (isRounded) {
-            view.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
-            view.setClipToOutline(true);
-        }
     }
 }

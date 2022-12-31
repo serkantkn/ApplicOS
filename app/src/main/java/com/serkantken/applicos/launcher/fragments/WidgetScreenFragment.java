@@ -38,6 +38,7 @@ import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
 import com.serkantken.applicos.Constants;
 import com.serkantken.applicos.R;
+import com.serkantken.applicos.Utils;
 import com.serkantken.applicos.clockalarm.ClockMainActivity;
 import com.serkantken.applicos.databinding.FragmentWidgetScreenBinding;
 import com.serkantken.applicos.launcher.MainActivity;
@@ -79,7 +80,8 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         binding = FragmentWidgetScreenBinding.inflate(inflater, container, false);
 
         settingsDatabase = SettingsDatabase.getInstance(requireContext());
-        blurViews(binding.weatherContainer, binding.mediaContainer, binding.notesContainer, binding.contactsContainer);
+        Utils utils = new Utils(requireActivity(), requireContext());
+        utils.blurMultipleViews(10f, true, binding.weatherContainer, binding.mediaContainer, binding.notesContainer, binding.contactsContainer);
 
         //SwipeRefreshLayout yükleme diskini kaldırma
         try {
@@ -111,27 +113,6 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         });
 
         return binding.getRoot();
-    }
-
-    private void blurViews(BlurView... blurView) {
-        for (BlurView view : blurView) {
-            blur(view, 10f, true);
-        }
-    }
-
-    public void blur(BlurView view, float radius, boolean isRounded) {
-        View decorView = requireActivity().getWindow().getDecorView();
-        ViewGroup rootView = decorView.findViewById(android.R.id.content);
-        Drawable windowBackground = decorView.getBackground();
-
-        view.setupWith(rootView, new RenderScriptBlur(requireContext()))
-                .setFrameClearDrawable(windowBackground)
-                .setBlurRadius(radius)
-                .setBlurAutoUpdate(true);
-        if (isRounded) {
-            view.setOutlineProvider(ViewOutlineProvider.BACKGROUND);
-            view.setClipToOutline(true);
-        }
     }
 
     private void showNotifications()
