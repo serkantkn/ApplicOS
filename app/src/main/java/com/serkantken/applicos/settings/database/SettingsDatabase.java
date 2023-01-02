@@ -42,7 +42,7 @@ public class SettingsDatabase
         editor.apply();
     }
 
-    public void editLongPreference(String preferenceName, String key, int value)
+    public void editLongPreference(String preferenceName, String key, long value)
     {
         sharedPreferences = context.getSharedPreferences(preferenceName, Context.MODE_PRIVATE);
         SharedPreferences.Editor editor = sharedPreferences.edit();

@@ -14,9 +14,6 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
-import android.view.View;
-import android.view.ViewGroup;
-import android.view.ViewOutlineProvider;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
@@ -34,7 +31,9 @@ import com.android.volley.toolbox.JsonArrayRequest;
 import com.android.volley.toolbox.JsonObjectRequest;
 import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.github.marlonlom.utilities.timeago.TimeAgo;
 import com.serkantken.applicos.Constants;
+import com.serkantken.applicos.R;
 import com.serkantken.applicos.Utils;
 import com.serkantken.applicos.databinding.ActivityWeatherMainBinding;
 import com.serkantken.applicos.models.WeatherModel;
@@ -45,16 +44,10 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.ArrayList;
-import java.util.Date;
-
-import eightbitlab.com.blurview.BlurView;
-import eightbitlab.com.blurview.RenderScriptBlur;
+import java.util.Locale;
 
 public class WeatherMainActivity extends AppCompatActivity {
     private ActivityWeatherMainBinding binding;
-    private ArrayList<WeatherModel> weatherList;
-    private WeatherAdapter adapter;
-    private LocationManager locationManager;
     private static final int LOCATION_REQUEST_CODE = 1;
     private SettingsDatabase settingsDatabase;
 
@@ -80,12 +73,11 @@ public class WeatherMainActivity extends AppCompatActivity {
             requestStoragePermission();
         }
 
-        weatherList = new ArrayList<>();
-        adapter = new WeatherAdapter(this, weatherList);
-        binding.todaysWeatherRV.setAdapter(adapter);
+        ArrayList<WeatherModel> weatherList = new ArrayList<>();
+        binding.todaysWeatherRV.setAdapter(new WeatherAdapter(this, weatherList));
         binding.todaysWeatherRV.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL));
 
-        locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
+        LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         try
         {
             if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
@@ -97,7 +89,14 @@ public class WeatherMainActivity extends AppCompatActivity {
             {
                 Location location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
                 if (isOneHourPassed())
-                    getCityName(Constants.apiKey, location.getLongitude(), location.getLatitude(), Constants.lang);
+                    if (Locale.getDefault().getLanguage().equals("tr"))
+                    {
+                        getCityName(location.getLongitude(), location.getLatitude(), Constants.lang_tr_TR);
+                    }
+                    else
+                    {
+                        getCityName(location.getLongitude(), location.getLatitude(), Constants.lang_en_US);
+                    }
             }
 
         }
@@ -110,16 +109,38 @@ public class WeatherMainActivity extends AppCompatActivity {
 
     private boolean isOneHourPassed()
     {
-        Long currentDate = new Date().getTime();
-        Long lastRefreshTime = SettingsDatabase.getInstance(this).getLongPreference("Weather", Constants.weatherRefreshTime);
+        long currentDate = System.currentTimeMillis();
+        long lastRefreshTime = settingsDatabase.getLongPreference(Constants.weatherPrefName, Constants.weatherRefreshTime);
 
+        if (lastRefreshTime != 0) //Data kontrol
+        {
+            if (currentDate - lastRefreshTime < 3600 * 1000)
+            {
+                long remainingTime = 3600 * 1000 - (currentDate - lastRefreshTime);
+                Toast.makeText(this, "Yenilemek için " + remainingTime + " saniye daha bekleyin", Toast.LENGTH_SHORT).show();
+                binding.cityName.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_cityName));
+                binding.temperature.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_temperature));
+                binding.forecast.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_condition));
+                Glide.with(this).load(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_icon)).into(binding.weatherAnim);
 
-        return true;
+                binding.refreshTime.setText(String.format("%s%s", getString(R.string.last_update), TimeAgo.using(lastRefreshTime)));
+
+                return false;
+            }
+            else
+            {
+                return true;
+            }
+        }
+        else
+        {
+            return true;
+        }
     }
 
-    private void getCityName(String apiKey, double longitude, double latitude, String lang)
+    private void getCityName(double longitude, double latitude, String lang)
     {
-        String url = "https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey="+apiKey+"&q="+latitude+"%2C%20"+longitude+"&language="+lang;
+        String url = "https://dataservice.accuweather.com/locations/v1/cities/geoposition/search?apikey="+ Constants.apiKey +"&q="+latitude+"%2C%20"+longitude+"&language="+lang;
 
         RequestQueue requestQueue = Volley.newRequestQueue(WeatherMainActivity.this);
 
@@ -129,7 +150,7 @@ public class WeatherMainActivity extends AppCompatActivity {
                 String cityName = response.getString("LocalizedName");
                 binding.cityName.setText(cityName);
                 settingsDatabase.editStringPreference(Constants.weatherPrefName, Constants.weather_cityName, cityName);
-                getWeatherInfo(apiKey, key, lang);
+                getWeatherInfo(key, lang);
             }
             catch (JSONException e)
             {
@@ -139,9 +160,9 @@ public class WeatherMainActivity extends AppCompatActivity {
         requestQueue.add(jsonObjectRequest);
     }
 
-    private void getWeatherInfo (String apiKey, String cityName, String lang)
+    private void getWeatherInfo(String cityName, String lang)
     {
-        String url = "https://dataservice.accuweather.com/forecasts/v1/hourly/1hour/"+cityName+"?apikey="+apiKey+"&language="+lang+"&details=true&metric=true";
+        String url = "https://dataservice.accuweather.com/forecasts/v1/hourly/1hour/"+cityName+"?apikey="+ Constants.apiKey +"&language="+lang+"&details=true&metric=true";
 
         RequestQueue requestQueue = Volley.newRequestQueue(WeatherMainActivity.this);
 
@@ -171,6 +192,8 @@ public class WeatherMainActivity extends AppCompatActivity {
                 }
                 Glide.with(this).load(icon).into(binding.weatherAnim);
                 settingsDatabase.editStringPreference(Constants.weatherPrefName, Constants.weather_icon, icon);
+
+                settingsDatabase.editLongPreference(Constants.weatherPrefName, Constants.weatherRefreshTime, System.currentTimeMillis());
             }
             catch (JSONException e)
             {
@@ -257,5 +280,11 @@ public class WeatherMainActivity extends AppCompatActivity {
         WallpaperManager wallpaperManager = WallpaperManager.getInstance(this);
         @SuppressLint("MissingPermission") Drawable wallpaperDrawable = wallpaperManager.getDrawable();
         binding.wallpaper.setBackground(wallpaperDrawable);
+    }
+
+    @Override
+    public void onBackPressed() {
+        super.onBackPressed();
+        overridePendingTransition(R.anim.fade_out, R.anim.fade_in);
     }
 }

@@ -110,6 +110,7 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         binding.weatherContainer.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), WeatherMainActivity.class);
             startActivity(intent);
+            requireActivity().overridePendingTransition(R.anim.fade_out, R.anim.fade_in);
         });
 
         return binding.getRoot();

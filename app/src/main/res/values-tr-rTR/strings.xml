@@ -19,4 +19,5 @@
     <string name="info_location_perm">Konum izni gerekli</string>
     <string name="info_internet_access">İnternet erişimi gerekli</string>
     <string name="touch_to_get_weather">Hava durumu bilgisini almak için dokunun</string>
+    <string name="last_update">"Son güncelleme: "</string>
 </resources>

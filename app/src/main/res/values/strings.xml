@@ -20,4 +20,5 @@
     <string name="info_location_perm">Location permission is required</string>
     <string name="info_internet_access">Internet access is required</string>
     <string name="touch_to_get_weather">Touch here to get weather forecast</string>
+    <string name="last_update">"Last update: "</string>
 </resources>
