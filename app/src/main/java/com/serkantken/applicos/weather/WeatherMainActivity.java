@@ -40,6 +40,7 @@ import com.serkantken.applicos.models.WeatherModel;
 import com.serkantken.applicos.settings.database.SettingsDatabase;
 import com.serkantken.applicos.weather.adapters.WeatherAdapter;
 
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
@@ -50,6 +51,8 @@ public class WeatherMainActivity extends AppCompatActivity {
     private ActivityWeatherMainBinding binding;
     private static final int LOCATION_REQUEST_CODE = 1;
     private SettingsDatabase settingsDatabase;
+    ArrayList<WeatherModel> weatherList = new ArrayList<>();
+    private WeatherAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -73,9 +76,9 @@ public class WeatherMainActivity extends AppCompatActivity {
             requestStoragePermission();
         }
 
-        ArrayList<WeatherModel> weatherList = new ArrayList<>();
-        binding.todaysWeatherRV.setAdapter(new WeatherAdapter(this, weatherList));
+        adapter = new WeatherAdapter(new Utils(this, this), this, weatherList);
         binding.todaysWeatherRV.setLayoutManager(new StaggeredGridLayoutManager(1, LinearLayoutManager.HORIZONTAL));
+        binding.todaysWeatherRV.setAdapter(adapter);
 
         LocationManager locationManager = (LocationManager) getSystemService(Context.LOCATION_SERVICE);
         try
@@ -117,7 +120,7 @@ public class WeatherMainActivity extends AppCompatActivity {
             if (currentDate - lastRefreshTime < 3600 * 1000)
             {
                 long remainingTime = 3600 * 1000 - (currentDate - lastRefreshTime);
-                Toast.makeText(this, "Yenilemek için " + remainingTime + " saniye daha bekleyin", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Yenilemek için " + remainingTime/1000/60 + " dakika daha bekleyin", Toast.LENGTH_SHORT).show();
                 binding.cityName.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_cityName));
                 binding.temperature.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_temperature));
                 binding.forecast.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_condition));
@@ -193,7 +196,41 @@ public class WeatherMainActivity extends AppCompatActivity {
                 Glide.with(this).load(icon).into(binding.weatherAnim);
                 settingsDatabase.editStringPreference(Constants.weatherPrefName, Constants.weather_icon, icon);
 
+                loadFiveDayForecast(cityName, lang);
+
                 settingsDatabase.editLongPreference(Constants.weatherPrefName, Constants.weatherRefreshTime, System.currentTimeMillis());
+            }
+            catch (JSONException e)
+            {
+                e.printStackTrace();
+            }
+        }, error -> {
+            //Toast.makeText(WeatherMainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
+        });
+        requestQueue.add(jsonObjectRequest);
+    }
+
+    private void loadFiveDayForecast(String cityName, String lang)
+    {
+        String url = "http://dataservice.accuweather.com/forecasts/v1/daily/5day/"+cityName+"?apikey="+Constants.apiKey+"&language="+lang+"&metric=true";
+
+        RequestQueue requestQueue = Volley.newRequestQueue(WeatherMainActivity.this);
+
+        JsonObjectRequest jsonObjectRequest = new JsonObjectRequest(Request.Method.GET, url, null, response -> {
+            try
+            {
+                JSONArray dailyForecasts = response.getJSONArray("DailyForecasts");
+                for (int i = 0; i <= 4; i++)
+                {
+                    WeatherModel model = new WeatherModel();
+                    model.setTime(dailyForecasts.getJSONObject(i).getLong("EpochDate"));
+                    model.setMin_temp(dailyForecasts.getJSONObject(i).getJSONObject("Temperature").getJSONObject("Minimum").getDouble("Value"));
+                    model.setMax_temp(dailyForecasts.getJSONObject(i).getJSONObject("Temperature").getJSONObject("Maximum").getDouble("Value"));
+                    model.setDay_icon(dailyForecasts.getJSONObject(i).getJSONObject("Day").getInt("Icon"));
+                    model.setNight_icon(dailyForecasts.getJSONObject(i).getJSONObject("Night").getInt("Icon"));
+                    weatherList.add(model);
+                }
+                adapter.notifyDataSetChanged();
             }
             catch (JSONException e)
             {

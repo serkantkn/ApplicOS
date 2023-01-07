@@ -2,20 +2,20 @@ package com.serkantken.applicos.models;
 
 import java.io.Serializable;
 
-public class WeatherModel  implements Serializable
+public class WeatherModel implements Serializable
 {
-    String time;
+    long time;
     String cityName;
-    String temperature;
-    String condition;
-    String icon;
-    String windSpeed;
+    double max_temp;
+    double min_temp;
+    int day_icon;
+    int night_icon;
 
-    public String getTime() {
+    public long getTime() {
         return time;
     }
 
-    public void setTime(String time) {
+    public void setTime(long time) {
         this.time = time;
     }
 
@@ -27,35 +27,35 @@ public class WeatherModel  implements Serializable
         this.cityName = cityName;
     }
 
-    public String getTemperature() {
-        return temperature;
+    public double getMax_temp() {
+        return max_temp;
     }
 
-    public void setTemperature(String temperature) {
-        this.temperature = temperature;
+    public void setMax_temp(double max_temp) {
+        this.max_temp = max_temp;
     }
 
-    public String getCondition() {
-        return condition;
+    public double getMin_temp() {
+        return min_temp;
     }
 
-    public void setCondition(String condition) {
-        this.condition = condition;
+    public void setMin_temp(double min_temp) {
+        this.min_temp = min_temp;
     }
 
-    public String getIcon() {
-        return icon;
+    public int getDay_icon() {
+        return day_icon;
     }
 
-    public void setIcon(String icon) {
-        this.icon = icon;
+    public void setDay_icon(int day_icon) {
+        this.day_icon = day_icon;
     }
 
-    public String getWindSpeed() {
-        return windSpeed;
+    public int getNight_icon() {
+        return night_icon;
     }
 
-    public void setWindSpeed(String windSpeed) {
-        this.windSpeed = windSpeed;
+    public void setNight_icon(int night_icon) {
+        this.night_icon = night_icon;
     }
 }

@@ -1,30 +1,30 @@
 package com.serkantken.applicos.weather.adapters;
 
-import android.annotation.SuppressLint;
 import android.content.Context;
 import android.view.LayoutInflater;
-import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.bumptech.glide.Glide;
+import com.serkantken.applicos.Utils;
 import com.serkantken.applicos.databinding.WeatherItemBinding;
 import com.serkantken.applicos.models.WeatherModel;
 
-import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
 
 public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHolder>
 {
+    Utils utils;
     Context context;
     ArrayList<WeatherModel> weatherList;
 
-    public WeatherAdapter(Context context, ArrayList<WeatherModel> weatherList)
+    public WeatherAdapter(Utils utils, Context context, ArrayList<WeatherModel> weatherList)
     {
+        this.utils = utils;
         this.context = context;
         this.weatherList = weatherList;
     }
@@ -44,18 +44,51 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
     public void onBindViewHolder(@NonNull ViewHolder holder, int position)
     {
         WeatherModel weather = weatherList.get(position);
-        holder.binding.temperature.setText(String.format("%s °C", weather.getTemperature()));
-        Glide.with(context).load("https:".concat(weather.getIcon())).into(holder.binding.weatherIcon);
-        holder.binding.windSpeed.setText(String.format("%s Km/h", weather.getWindSpeed()));
-
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat input = new SimpleDateFormat("yyyy-MM-dd hh:mm");
-        @SuppressLint("SimpleDateFormat") SimpleDateFormat output = new SimpleDateFormat("HH:mm");
+        SimpleDateFormat dayMonth = new SimpleDateFormat("dd MMMM");
+        SimpleDateFormat dayOfWeek = new SimpleDateFormat("EEEE");
         try {
-            Date time = input.parse(weather.getTime());
-            holder.binding.time.setText(output.format(time));
-        } catch (ParseException e) {
+            Date date = new Date(weather.getTime());
+
+            String dayMonthString = dayMonth.format(date);
+            holder.binding.dayMonth.setText(dayMonthString);
+
+            String dayOfWeekString = dayOfWeek.format(date);
+            holder.binding.dayOfWeek.setText(dayOfWeekString);
+        } catch (NumberFormatException e)
+        {
             e.printStackTrace();
         }
+
+        holder.binding.maxTemperature.setText(String.valueOf(weather.getMax_temp()));
+        holder.binding.minTemperature.setText(String.valueOf(weather.getMin_temp()));
+
+        int iconNo = weather.getDay_icon();
+        String eleman1 = String.valueOf(iconNo);
+        String iconDay;
+        if (eleman1.length() == 2)
+        {
+            iconDay = "https://developer.accuweather.com/sites/default/files/"+eleman1+"-s.png";
+        }
+        else
+        {
+            iconDay = "https://developer.accuweather.com/sites/default/files/0"+eleman1+"-s.png";
+        }
+        Glide.with(context).load(iconDay).into(holder.binding.weatherIconDay);
+
+        int iconNoN = weather.getNight_icon();
+        String eleman2 = String.valueOf(iconNo);
+        String iconNight;
+        if (eleman2.length() == 2)
+        {
+            iconNight = "https://developer.accuweather.com/sites/default/files/"+eleman2+"-s.png";
+        }
+        else
+        {
+            iconNight = "https://developer.accuweather.com/sites/default/files/0"+eleman2+"-s.png";
+        }
+        Glide.with(context).load(iconNight).into(holder.binding.weatherIconNight);
+
+        utils.blur(holder.binding.weatherItemContainer, 10f, true);
     }
 
     @Override
@@ -64,7 +97,7 @@ public class WeatherAdapter extends RecyclerView.Adapter<WeatherAdapter.ViewHold
         return weatherList.size();
     }
 
-    public class ViewHolder extends RecyclerView.ViewHolder
+    public static class ViewHolder extends RecyclerView.ViewHolder
     {
         WeatherItemBinding binding;
 
