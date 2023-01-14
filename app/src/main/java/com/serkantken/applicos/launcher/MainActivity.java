@@ -3,13 +3,11 @@ package com.serkantken.applicos.launcher;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.WallpaperManager;
-import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.content.pm.ResolveInfo;
 import android.content.res.Resources;
 import android.graphics.drawable.Drawable;
-import android.location.Location;
-import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,48 +16,30 @@ import android.provider.Settings;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.ViewOutlineProvider;
-import android.widget.ImageView;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.cardview.widget.CardView;
-import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
 import androidx.core.content.ContextCompat;
-import androidx.core.util.Pair;
 import androidx.core.view.ViewCompat;
-import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
-import com.android.volley.Request;
-import com.android.volley.RequestQueue;
-import com.android.volley.toolbox.JsonArrayRequest;
-import com.android.volley.toolbox.JsonObjectRequest;
-import com.android.volley.toolbox.Volley;
 import com.bumptech.glide.Glide;
+import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.serkantken.applicos.R;
 import com.serkantken.applicos.clockalarm.ClockMainActivity;
 import com.serkantken.applicos.databinding.ActivityMainBinding;
 import com.serkantken.applicos.launcher.adapters.LauncherPageAdapter;
-import com.serkantken.applicos.models.ContactModel;
-import com.serkantken.applicos.models.NotesModel;
-import com.serkantken.applicos.notes.NotesClickListener;
+import com.serkantken.applicos.models.AppModel;
 import com.serkantken.applicos.notes.NotesMainActivity;
-import com.serkantken.applicos.notes.adapters.NotesListAdapter;
-import com.serkantken.applicos.notes.database.RoomDB;
 import com.serkantken.applicos.settings.database.SettingsDatabase;
 import com.serkantken.applicos.telephone.TelephoneMainActivity;
-import com.serkantken.applicos.telephone.database.ContactsDB;
-import com.serkantken.applicos.weather.WeatherMainActivity;
 
-import org.json.JSONException;
-import org.json.JSONObject;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
@@ -69,64 +49,127 @@ import eightbitlab.com.blurview.RenderScriptBlur;
 
 public class MainActivity extends AppCompatActivity {
     private ActivityMainBinding binding;
+    private BottomSheetBehavior<BlurView> bottomSheetBehavior;
+    private SettingsDatabase database;
+    private List<AppModel> installedApps;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setTheme(R.style.Theme_ApplicOS);
         setContentView(binding.getRoot());
 
-        if (isEdgeToEdgeEnabled() == 0 || isEdgeToEdgeEnabled() == 1)
-        {
-            setMargins(binding.dockIcons, 0, 0, 0, 120);
-        }
-        else
-        {
-            setMargins(binding.dockIcons, 0, 0, 0, 70);
-        }
-        getWindow().setNavigationBarColor(ContextCompat.getColor(MainActivity.this, android.R.color.transparent));
+        getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.primary_transparent));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
-        blurViews(binding.dock);
-        binding.pageViewer.setAdapter(new LauncherPageAdapter(MainActivity.this, 2));
+        database = SettingsDatabase.getInstance(this);
 
-        if (checkStoragePermission())
-        {
-            getUserWallpaper();
-        }
-        else
-        {
-            requestStoragePermission();
-        }
+        installedApps = getInstalledApps();
+        initializeDock();
+        LauncherPageAdapter adapter = new LauncherPageAdapter(MainActivity.this, installedApps, 2);
+        binding.pageViewer.setAdapter(adapter);
 
-        binding.iconInternet.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, NotesMainActivity.class);
-            startActivity(intent);
+        binding.icon1.setOnClickListener(v -> {
+            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(database.getStringPreference("dockIcons", "dockIcon1_package"));
+            if (launchAppIntent != null)
+            {
+                startActivity(launchAppIntent);
+            }
         });
-
-        binding.iconTelephone.setOnClickListener(v -> {
-            Intent intent = new Intent(MainActivity.this, TelephoneMainActivity.class);
-            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(this, binding.iconTelephone, Objects.requireNonNull(ViewCompat.getTransitionName(binding.iconTelephone)));
-            startActivity(intent, optionsCompat.toBundle());
+        binding.icon2.setOnClickListener(v -> {
+            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(database.getStringPreference("dockIcons", "dockIcon2_package"));
+            if (launchAppIntent != null)
+            {
+                startActivity(launchAppIntent);
+            }
         });
-
-        binding.profileImage.setOnClickListener(view -> {
-            if (binding.username.getVisibility() == View.GONE) {
-                binding.username.setVisibility(View.VISIBLE);
-                binding.brightnessContainer.setVisibility(View.VISIBLE);
-                binding.volumeContainer.setVisibility(View.VISIBLE);
-                binding.clock.setVisibility(View.GONE);
-            } else {
-                binding.username.setVisibility(View.GONE);
-                binding.brightnessContainer.setVisibility(View.GONE);
-                binding.volumeContainer.setVisibility(View.GONE);
-                binding.clock.setVisibility(View.VISIBLE);
+        binding.icon3.setOnClickListener(v -> {
+            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(database.getStringPreference("dockIcons", "dockIcon3_package"));
+            if (launchAppIntent != null)
+            {
+                startActivity(launchAppIntent);
+            }
+        });
+        binding.icon4.setOnClickListener(v -> {
+            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(database.getStringPreference("dockIcons", "dockIcon4_package"));
+            if (launchAppIntent != null)
+            {
+                startActivity(launchAppIntent);
             }
         });
 
-        binding.clock.setOnClickListener(view -> {
-            Intent intent = new Intent(MainActivity.this, ClockMainActivity.class);
-            ActivityOptionsCompat optionsCompat = ActivityOptionsCompat.makeSceneTransitionAnimation(MainActivity.this, binding.clock, Objects.requireNonNull(ViewCompat.getTransitionName(binding.clock)));
-            startActivity(intent, optionsCompat.toBundle());
+        if (checkStoragePermission()) {
+            getUserWallpaper();
+        } else {
+            requestStoragePermission();
+        }
+
+        binding.buttonNotes.setOnClickListener(v -> {
+            Intent intent = new Intent(MainActivity.this, NotesMainActivity.class);
+            startActivity(intent);
+            bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+        });
+    }
+
+    private List<AppModel> getInstalledApps()
+    {
+        List<AppModel> list = new ArrayList<>();
+
+        Intent intent = new Intent(Intent.ACTION_MAIN, null);
+        intent.addCategory(Intent.CATEGORY_LAUNCHER);
+        List<ResolveInfo> untreatedAppList = getPackageManager().queryIntentActivities(intent, 0);
+
+        for (ResolveInfo app : untreatedAppList)
+        {
+            String appName = app.loadLabel(getPackageManager()).toString();
+            String appPackageName = app.activityInfo.packageName;
+            Drawable appImage = app.activityInfo.loadIcon(getPackageManager());
+            AppModel appModel = new AppModel(appName, appPackageName, appImage);
+            if (!list.contains(appModel))
+            {
+                list.add(appModel);
+            }
+        }
+        return list;
+    }
+
+    private void initializeDock() {
+        blurViews(binding.dock);
+        bottomSheetBehavior = BottomSheetBehavior.from(binding.dock);
+        bottomSheetBehavior.setHideable(false);
+        if (isEdgeToEdgeEnabled() == 0 || isEdgeToEdgeEnabled() == 1) {
+            bottomSheetBehavior.setPeekHeight(310);
+        } else {
+            bottomSheetBehavior.setPeekHeight(250);
+        }
+
+        String package1 = database.getStringPreference("dockIcons", "dockIcon1");
+        String package2 = database.getStringPreference("dockIcons", "dockIcon2");
+        String package3 = database.getStringPreference("dockIcons", "dockIcon3");
+        for (AppModel model : installedApps)
+        {
+            if (package1.equals(model.getPackageName())) {
+                Glide.with(this).load(model.getImage()).into(binding.icon1);
+            } else if (package2.equals(model.getPackageName())) {
+                Glide.with(this).load(model.getImage()).into(binding.icon2);
+            } else if (package3.equals(model.getPackageName())) {
+                Glide.with(this).load(model.getImage()).into(binding.icon3);
+            } else {
+                Glide.with(this).load(model.getImage()).into(binding.icon4);
+            }
+        }
+
+        bottomSheetBehavior.addBottomSheetCallback(new BottomSheetBehavior.BottomSheetCallback() {
+            @Override
+            public void onStateChanged(@NonNull View bottomSheet, int newState) {
+                if (newState == BottomSheetBehavior.STATE_HIDDEN)
+                    bottomSheetBehavior.setState(BottomSheetBehavior.STATE_COLLAPSED);
+            }
+
+            @Override
+            public void onSlide(@NonNull View bottomSheet, float slideOffset) {
+            }
         });
     }
 
@@ -147,15 +190,6 @@ public class MainActivity extends AppCompatActivity {
             return resources.getInteger(resourceId);
         }
         return 0;
-    }
-
-    public int getStatusBarHeight() {
-        int result = 0;
-        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-        if (resourceId > 0) {
-            result = getResources().getDimensionPixelSize(resourceId);
-        }
-        return result;
     }
 
     private void blurViews(BlurView... blurView) {
@@ -259,6 +293,31 @@ public class MainActivity extends AppCompatActivity {
         {
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE, Manifest.permission.READ_EXTERNAL_STORAGE}, 1);
         }
+    }
+
+    public void setDockIcons(List<AppModel> list, AppModel selected)
+    {
+        String package1 = database.getStringPreference("dockIcons", "dockIcon1");
+        String package2 = database.getStringPreference("dockIcons", "dockIcon2");
+        String package3 = database.getStringPreference("dockIcons", "dockIcon3");
+        String package4 = database.getStringPreference("dockIcons", "dockIcon4");
+
+        if (list.contains(selected))
+        {
+            for (AppModel model : list)
+            {
+                if (package1.equals(model.getPackageName())) {
+                    Glide.with(this).load(model.getImage()).into(binding.icon1);
+                } else if (package2.equals(model.getPackageName())) {
+                    Glide.with(this).load(model.getImage()).into(binding.icon2);
+                } else if (package3.equals(model.getPackageName())) {
+                    Glide.with(this).load(model.getImage()).into(binding.icon3);
+                } else if (package4.equals(model.getPackageName())){
+                    Glide.with(this).load(model.getImage()).into(binding.icon4);
+                }
+            }
+        }
+        initializeDock();
     }
 
     private void getUserWallpaper() {

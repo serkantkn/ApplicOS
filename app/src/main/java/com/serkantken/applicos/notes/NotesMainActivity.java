@@ -147,7 +147,6 @@ public class NotesMainActivity extends AppCompatActivity implements PopupMenu.On
 
         @Override
         public void onLongClick(NotesModel notes, CardView cardView) {
-            selectedNote = new NotesModel();
             selectedNote = notes;
             showPopup(cardView);
         }

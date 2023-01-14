@@ -3,12 +3,14 @@ package com.serkantken.applicos.launcher.adapters;
 import android.content.Context;
 import android.content.Intent;
 import android.view.LayoutInflater;
+import android.view.View;
 import android.view.ViewGroup;
 
 import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.serkantken.applicos.databinding.AppIconItemBinding;
+import com.serkantken.applicos.launcher.AppClickListener;
 import com.serkantken.applicos.models.AppModel;
 
 import java.util.List;
@@ -17,11 +19,13 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>
 {
     private final Context context;
     private final List<AppModel> appList;
+    private AppClickListener appClickListener;
 
-    public AppAdapter(Context context, List<AppModel> appList)
+    public AppAdapter(Context context, List<AppModel> appList, AppClickListener appClickListener)
     {
         this.context = context;
         this.appList = appList;
+        this.appClickListener = appClickListener;
     }
 
     @NonNull
@@ -40,11 +44,12 @@ public class AppAdapter extends RecyclerView.Adapter<AppAdapter.ViewHolder>
         holder.binding.appTitle.setText(appList.get(position).getName());
 
         holder.binding.appIconContainer.setOnClickListener(view1 -> {
-            Intent launchAppIntent = context.getPackageManager().getLaunchIntentForPackage(appList.get(position).getPackageName());
-            if (launchAppIntent != null)
-            {
-                context.startActivity(launchAppIntent);
-            }
+            appClickListener.onClick(appList.get(position));
+        });
+
+        holder.binding.appIconContainer.setOnLongClickListener(v -> {
+            appClickListener.onLongClick(appList.get(position), holder.binding.appIconContainer);
+            return true;
         });
     }
 

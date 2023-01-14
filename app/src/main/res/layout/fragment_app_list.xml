@@ -15,7 +15,7 @@
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:id="@+id/drawerGrid"
-        android:paddingTop="85dp"
+        android:paddingTop="35dp"
         android:paddingBottom="110dp"
         android:clipToPadding="false"
         android:layout_marginStart="5dp"

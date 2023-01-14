@@ -12,6 +12,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:id="@+id/blurBackground"
+        android:background="@color/primary_darker_transparent"
         android:fitsSystemWindows="false">
 
         <androidx.constraintlayout.widget.ConstraintLayout
@@ -107,6 +108,18 @@
                 app:layout_constraintEnd_toEndOf="parent"
                 android:layout_marginTop="5dp"/>
 
+            <com.airbnb.lottie.LottieAnimationView
+                android:id="@+id/weatherAnim"
+                android:layout_width="250dp"
+                android:layout_height="0dp"
+                app:layout_constraintDimensionRatio="1:1"
+                android:scaleType="fitXY"
+                app:layout_constraintTop_toBottomOf="@id/refreshTime"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                app:lottie_autoPlay="true"
+                app:lottie_loop="true"/>
+
             <TextView
                 android:id="@+id/temperature"
                 android:layout_width="wrap_content"
@@ -114,14 +127,13 @@
                 android:fontFamily="@font/jost_regular"
                 android:gravity="center"
                 android:textColor="@color/white"
-                android:textSize="45sp"
-                android:shadowColor="@android:color/black"
+                android:textSize="65sp"
+                android:shadowColor="@color/primary_darker"
                 android:shadowRadius="2"
-                app:layout_constraintBottom_toTopOf="@id/forecast"
-                app:layout_constraintTop_toBottomOf="@id/actionBar"
+                app:layout_constraintTop_toBottomOf="@id/refreshTime"
                 app:layout_constraintStart_toStartOf="parent"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintVertical_chainStyle="packed" />
+                android:layout_marginTop="220dp"/>
 
             <TextView
                 android:id="@+id/forecast"
@@ -131,26 +143,11 @@
                 android:gravity="center"
                 android:textColor="@color/white"
                 android:textSize="30sp"
-                android:shadowColor="@android:color/black"
+                android:shadowColor="@color/primary_darker"
                 android:shadowRadius="2"
+                app:layout_constraintTop_toBottomOf="@id/temperature"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintBottom_toTopOf="@id/weatherAnim"
-                app:layout_constraintTop_toBottomOf="@id/temperature" />
-
-            <ImageView
-                android:id="@+id/weatherAnim"
-                android:layout_width="150dp"
-                android:layout_height="150dp"
-                android:scaleType="fitCenter"
-                app:layout_constraintBottom_toTopOf="@id/todaysWeatherRV"
-                app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/forecast"/>
-                <!--
-                app:lottie_autoPlay="true"
-                app:lottie_loop="true"
-                 -->
+                app:layout_constraintEnd_toEndOf="parent"/>
 
             <androidx.recyclerview.widget.RecyclerView
                 android:id="@+id/todaysWeatherRV"

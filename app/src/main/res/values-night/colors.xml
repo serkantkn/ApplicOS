@@ -27,6 +27,7 @@
     <color name="tab_icon_tint">#A698C1</color>
     <color name="fav_contact_tint">#36A5F0</color>
     <color name="widget_background">#80353F48</color>
+    <color name="transparent">#00000000</color>
 
     <color name="note_color_1">#7859b7</color>
     <color name="note_color_2">#36A5F0</color>

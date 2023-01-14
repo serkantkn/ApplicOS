@@ -7,13 +7,18 @@ import androidx.viewpager2.adapter.FragmentStateAdapter;
 
 import com.serkantken.applicos.launcher.fragments.AppListFragment;
 import com.serkantken.applicos.launcher.fragments.WidgetScreenFragment;
+import com.serkantken.applicos.models.AppModel;
+
+import java.util.List;
 
 public class LauncherPageAdapter extends FragmentStateAdapter
 {
-    private int totalTabs = 0;
+    private List<AppModel> installedApps;
+    private int totalTabs;
 
-    public LauncherPageAdapter(@NonNull FragmentActivity fragmentActivity, int totalTabs) {
+    public LauncherPageAdapter(@NonNull FragmentActivity fragmentActivity, List<AppModel> installedApps, int totalTabs) {
         super(fragmentActivity);
+        this.installedApps = installedApps;
         this.totalTabs = totalTabs;
     }
 
@@ -21,7 +26,7 @@ public class LauncherPageAdapter extends FragmentStateAdapter
     @Override
     public Fragment createFragment(int position) {
         if (position == 1) {
-            return new AppListFragment();
+            return new AppListFragment(installedApps);
         }
         return new WidgetScreenFragment();
     }

@@ -13,6 +13,7 @@ import android.location.LocationManager;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.cardview.widget.CardView;
 import androidx.core.app.ActivityCompat;
 import androidx.core.app.ActivityOptionsCompat;
@@ -58,7 +59,9 @@ import org.json.JSONObject;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Objects;
 
@@ -78,10 +81,11 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
     public View onCreateView(@NonNull LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
     {
         binding = FragmentWidgetScreenBinding.inflate(inflater, container, false);
+        requireActivity().setTheme(R.style.Theme_ApplicOS);
 
         settingsDatabase = SettingsDatabase.getInstance(requireContext());
         Utils utils = new Utils(requireActivity(), requireContext());
-        utils.blurMultipleViews(10f, true, binding.weatherContainer, binding.mediaContainer, binding.notesContainer, binding.contactsContainer);
+        utils.blurMultipleViews(10f, true, binding.weatherContainer, binding.calendarContainer, binding.clockContainer, binding.notesContainer, binding.lastAppsContainer);
 
         //SwipeRefreshLayout yükleme diskini kaldırma
         try {
@@ -96,8 +100,9 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         binding.notifGesture.setOnRefreshListener(this::showNotifications);
 
         loadNotesWidget();
-        getFavouriteContacts();
+        //getFavouriteContacts();
         setWeatherWidget();
+        setCalendarWidget();
 
         binding.notesTitle.setOnClickListener(v -> {
             Intent intent = new Intent(requireContext(), NotesMainActivity.class);
@@ -151,6 +156,18 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         }
     }
 
+    private void setCalendarWidget()
+    {
+        long currentDate = new Date().getTime();
+        SimpleDateFormat dayFormat = new SimpleDateFormat("dd");
+        SimpleDateFormat monthFormat = new SimpleDateFormat("MMMM");
+        SimpleDateFormat dayOfMonthFormat = new SimpleDateFormat("EEEE");
+
+        binding.tvDay.setText(dayFormat.format(currentDate));
+        binding.tvMonth.setText(monthFormat.format(currentDate));
+        binding.tvDayOfMonth.setText(dayOfMonthFormat.format(currentDate));
+    }
+
     private void addNote() {
         Intent intent = new Intent(requireContext(), NotesMainActivity.class);
         intent.putExtra("requestCode", "10");
@@ -188,8 +205,11 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
         {
             binding.weatherTitle.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_cityName));
             binding.condition.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_condition));
+            binding.condition.setSelected(true);
             binding.temperature.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_temperature));
-            Glide.with(this).load(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_icon)).into(binding.iconForecast);
+            //Glide.with(this).load(AppCompatResources.getDrawable(requireContext(), settingsDatabase.getIntegerPreference(Constants.weatherPrefName, Constants.weather_icon))).into(binding.iconForecast);
+            binding.iconForecast.setAnimation(settingsDatabase.getIntegerPreference(Constants.weatherPrefName, Constants.weather_icon));
+            binding.iconForecast.playAnimation();
             binding.textWarning.setVisibility(View.GONE);
         }
         else
@@ -217,7 +237,8 @@ public class WidgetScreenFragment extends Fragment implements NotesClickListener
     public void onResume() {
         super.onResume();
         loadNotesWidget();
-        getFavouriteContacts();
+        //getFavouriteContacts();
         setWeatherWidget();
+        setCalendarWidget();
     }
 }

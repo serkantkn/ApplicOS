@@ -21,4 +21,9 @@
     <string name="info_internet_access">Internet access is required</string>
     <string name="touch_to_get_weather">Touch here to get weather forecast</string>
     <string name="last_update">"Last update: "</string>
+    <string name="takvim">Calendar</string>
+    <string name="last_applications">Last Applications</string>
+    <string name="messaging">Messaging</string>
+    <string name="type_a_message">Type a message...</string>
+    <string name="pin_to_dock">Pin to dock</string>
 </resources>

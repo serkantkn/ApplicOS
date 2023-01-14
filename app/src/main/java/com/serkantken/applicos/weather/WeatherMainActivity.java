@@ -14,12 +14,14 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.provider.Settings;
+import android.view.WindowManager;
 import android.widget.Toast;
 
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.content.res.AppCompatResources;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
 import androidx.recyclerview.widget.LinearLayoutManager;
@@ -61,6 +63,8 @@ public class WeatherMainActivity extends AppCompatActivity {
         setContentView(binding.getRoot());
 
         settingsDatabase = SettingsDatabase.getInstance(this);
+        getWindow().setNavigationBarColor(ContextCompat.getColor(this, R.color.primary_transparent));
+        getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
         binding.buttonBack.setOnClickListener(v -> onBackPressed());
         Utils utils = new Utils(this, this);
@@ -124,7 +128,8 @@ public class WeatherMainActivity extends AppCompatActivity {
                 binding.cityName.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_cityName));
                 binding.temperature.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_temperature));
                 binding.forecast.setText(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_condition));
-                Glide.with(this).load(settingsDatabase.getStringPreference(Constants.weatherPrefName, Constants.weather_icon)).into(binding.weatherAnim);
+                //Glide.with(this).load(AppCompatResources.getDrawable(this, settingsDatabase.getIntegerPreference(Constants.weatherPrefName, Constants.weather_icon))).into(binding.weatherAnim);
+                binding.weatherAnim.setAnimation(settingsDatabase.getIntegerPreference(Constants.weatherPrefName, Constants.weather_icon));
 
                 binding.refreshTime.setText(String.format("%s%s", getString(R.string.last_update), TimeAgo.using(lastRefreshTime)));
 
@@ -182,8 +187,9 @@ public class WeatherMainActivity extends AppCompatActivity {
                 binding.temperature.setText(temperature);
                 settingsDatabase.editStringPreference(Constants.weatherPrefName, Constants.weather_temperature, temperature);
 
-                int iconNo = jsonObject.getInt("WeatherIcon");
-                String eleman = String.valueOf(iconNo);
+                int iconNo =  setWeatherIcon(jsonObject.getInt("WeatherIcon"));
+
+                /*String eleman = String.valueOf(iconNo);
                 String icon;
                 if (eleman.length() == 2)
                 {
@@ -192,9 +198,11 @@ public class WeatherMainActivity extends AppCompatActivity {
                 else
                 {
                     icon = "https://developer.accuweather.com/sites/default/files/0"+eleman+"-s.png";
-                }
-                Glide.with(this).load(icon).into(binding.weatherAnim);
-                settingsDatabase.editStringPreference(Constants.weatherPrefName, Constants.weather_icon, icon);
+                }*/
+
+                //Glide.with(this).load(AppCompatResources.getDrawable(this, iconNo)).into(binding.weatherAnim);
+                binding.weatherAnim.setAnimation(iconNo);
+                settingsDatabase.editIntegerPreference(Constants.weatherPrefName, Constants.weather_icon, iconNo);
 
                 loadFiveDayForecast(cityName, lang);
 
@@ -208,6 +216,64 @@ public class WeatherMainActivity extends AppCompatActivity {
             //Toast.makeText(WeatherMainActivity.this, error.getMessage(), Toast.LENGTH_SHORT).show();
         });
         requestQueue.add(jsonObjectRequest);
+    }
+
+    private int setWeatherIcon(int iconNo) {
+        switch (iconNo)
+        {
+            case 2:
+            case 21:
+                return R.raw.weather_day_few_clouds;
+            case 3:
+            case 4:
+            case 5:
+            case 20:
+                return R.raw.weather_day_more_clouds;
+            case 6:
+            case 7:
+            case 8:
+            case 19:
+                return R.raw.weather_day_mostly_cloudy;
+            case 11: return R.raw.weather_day_mist;
+            case 12:
+            case 13:
+            case 14:
+                return R.raw.weather_day_showers;
+            case 15:
+            case 16:
+            case 17:
+                return R.raw.weather_day_thunderstorm;
+            case 18:
+            case 26:
+                return R.raw.weather_day_rainy;
+            case 22:
+            case 23:
+            case 24:
+            case 25:
+            case 29:
+                return R.raw.weather_day_snow;
+            case 30: return R.raw.weather_hot;
+            case 31: return R.raw.weather_cold;
+            case 32: return R.raw.weather_wind;
+            case 33: return R.raw.weather_night_clear;
+            case 34:
+            case 35:
+                return R.raw.weather_night_few_clouds;
+            case 36:
+            case 37:
+                return R.raw.weather_night_more_clouds;
+            case 38: return R.raw.weather_night_mostly_cloudy;
+            case 39:
+            case 40:
+                return R.raw.weather_night_showers;
+            case 41:
+            case 42:
+                return R.raw.weather_night_thunderstorm;
+            case 43:
+            case 44:
+                return R.raw.weather_night_snow;
+            default: return R.raw.weather_day_clear;
+        }
     }
 
     private void loadFiveDayForecast(String cityName, String lang)

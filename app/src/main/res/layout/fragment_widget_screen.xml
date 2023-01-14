@@ -19,6 +19,9 @@
             android:id="@+id/home"
             android:layout_width="match_parent"
             android:layout_height="0dp"
+            android:paddingTop="35dp"
+            android:paddingBottom="110dp"
+            android:clipToPadding="false"
             app:layout_constraintTop_toTopOf="parent">
 
             <androidx.constraintlayout.widget.ConstraintLayout
@@ -27,18 +30,13 @@
                 android:animateLayoutChanges="true"
                 android:paddingBottom="10dp">
 
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="60dp"
-                    android:id="@+id/topspace"
-                    app:layout_constraintTop_toTopOf="parent"/>
-
                 <eightbitlab.com.blurview.BlurView
                     android:id="@+id/weatherContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="2.1"
                     android:background="@drawable/widget_background"
-                    app:layout_constraintTop_toBottomOf="@id/topspace"
+                    app:layout_constraintTop_toTopOf="parent"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp">
@@ -84,16 +82,17 @@
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintEnd_toEndOf="parent"/>
 
-                        <ImageView
-                            android:layout_width="85dp"
-                            android:layout_height="85dp"
+                        <com.airbnb.lottie.LottieAnimationView
+                            android:layout_width="130dp"
+                            android:layout_height="0dp"
+                            app:layout_constraintDimensionRatio="1:1"
                             android:id="@+id/iconForecast"
-                            android:scaleType="centerCrop"
-                            app:layout_constraintTop_toTopOf="parent"
-                            app:layout_constraintEnd_toEndOf="parent"
+                            android:scaleType="fitXY"
+                            app:layout_constraintTop_toBottomOf="@id/iconWeather"
                             app:layout_constraintBottom_toBottomOf="parent"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="15dp"/>
+                            app:layout_constraintStart_toStartOf="@id/iconWeather"
+                            app:lottie_autoPlay="true"
+                            app:lottie_loop="true" />
 
                         <TextView
                             android:layout_width="wrap_content"
@@ -101,32 +100,185 @@
                             android:id="@+id/temperature"
                             android:textColor="@color/white"
                             android:fontFamily="@font/jost_regular"
-                            android:textSize="35sp"
+                            android:textSize="36sp"
                             android:gravity="center"
-                            app:layout_constraintStart_toStartOf="@id/iconWeather"
-                            app:layout_constraintTop_toBottomOf="@id/iconWeather"
+                            app:layout_constraintTop_toTopOf="@id/iconForecast"
+                            app:layout_constraintStart_toEndOf="@id/iconForecast"
                             app:layout_constraintBottom_toTopOf="@id/condition"
-                            app:layout_constraintEnd_toStartOf="@id/iconForecast"
-                            android:layout_marginTop="10dp"
-                            android:layout_marginEnd="10dp"/>
+                            app:layout_constraintVertical_chainStyle="packed"
+                            android:layout_marginStart="10dp"/>
 
                         <TextView
                             android:layout_width="0dp"
                             android:layout_height="wrap_content"
                             android:id="@+id/condition"
-                            app:layout_constraintStart_toStartOf="@id/iconWeather"
-                            app:layout_constraintTop_toBottomOf="@id/temperature"
-                            app:layout_constraintEnd_toStartOf="@id/iconForecast"
-                            app:layout_constraintBottom_toBottomOf="parent"
-                            android:layout_marginEnd="10dp"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/jost_regular"
+                            android:textSize="25sp"
                             android:singleLine="true"
                             android:ellipsize="marquee"
                             android:marqueeRepeatLimit="marquee_forever"
                             android:scrollHorizontally="true"
+                            app:layout_constraintTop_toBottomOf="@id/temperature"
+                            app:layout_constraintStart_toEndOf="@id/iconForecast"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            app:layout_constraintVertical_chainStyle="packed"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginStart="10dp"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </eightbitlab.com.blurview.BlurView>
+
+                <eightbitlab.com.blurview.BlurView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:id="@+id/calendarContainer"
+                    android:background="@drawable/widget_background"
+                    app:layout_constraintDimensionRatio="1.1"
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/weatherContainer"
+                    app:layout_constraintEnd_toStartOf="@id/clockContainer"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="5dp"
+                    android:layout_marginTop="10dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingBottom="10dp">
+
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:id="@+id/iconCalendar"
+                            android:src="@drawable/ic_calendar"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginStart="10dp"/>
+
+                        <TextView
+                            android:id="@+id/calendarTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/takvim"
                             android:textColor="@color/white"
                             android:fontFamily="@font/jost_regular"
-                            android:textSize="20sp"
-                            android:gravity="center"/>
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toEndOf="@id/iconCalendar"
+                            app:layout_constraintTop_toTopOf="@id/iconCalendar"
+                            app:layout_constraintBottom_toBottomOf="@id/iconCalendar"
+                            android:layout_marginStart="10dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_day"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/jost_regular"
+                            android:text="10"
+                            android:textColor="@color/white"
+                            android:textSize="50sp"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintHorizontal_bias="0"
+                            android:layout_marginStart="10dp"
+                            app:layout_constraintTop_toBottomOf="@id/iconCalendar"/>
+
+                        <TextView
+                            android:id="@+id/tv_month"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/jost_regular"
+                            android:text="Ağustos"
+                            android:textColor="@color/white"
+                            android:textSize="27sp"
+                            android:singleLine="true"
+                            android:ellipsize="marquee"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            app:layout_constraintStart_toEndOf="@id/tv_day"
+                            app:layout_constraintTop_toTopOf="@id/tv_day"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            android:layout_marginStart="10dp"
+                            android:layout_marginEnd="10dp"
+                            android:layout_marginTop="5dp"/>
+
+                        <TextView
+                            android:id="@+id/tv_dayOfMonth"
+                            android:layout_width="0dp"
+                            android:layout_height="wrap_content"
+                            android:fontFamily="@font/jost_regular"
+                            android:text="Perşembe"
+                            android:textColor="@color/white"
+                            android:textSize="17sp"
+                            android:singleLine="true"
+                            android:ellipsize="marquee"
+                            android:marqueeRepeatLimit="marquee_forever"
+                            android:scrollHorizontally="true"
+                            app:layout_constraintStart_toStartOf="@id/tv_month"
+                            app:layout_constraintTop_toBottomOf="@id/tv_month"
+                            app:layout_constraintEnd_toEndOf="@id/tv_month"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </eightbitlab.com.blurview.BlurView>
+
+                <eightbitlab.com.blurview.BlurView
+                    android:layout_width="0dp"
+                    android:layout_height="0dp"
+                    android:id="@+id/clockContainer"
+                    android:background="@drawable/widget_background"
+                    app:layout_constraintDimensionRatio="1.1"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toBottomOf="@id/weatherContainer"
+                    app:layout_constraintStart_toEndOf="@id/calendarContainer"
+                    android:layout_marginStart="5dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginTop="10dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:paddingBottom="10dp">
+
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:id="@+id/iconClock"
+                            android:src="@drawable/ic_clock"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginStart="10dp"/>
+
+                        <TextView
+                            android:id="@+id/clockTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/clock"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/jost_regular"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toEndOf="@id/iconClock"
+                            app:layout_constraintTop_toTopOf="@id/iconClock"
+                            app:layout_constraintBottom_toBottomOf="@id/iconClock"
+                            android:layout_marginStart="10dp"/>
+
+                        <AnalogClock
+                            android:layout_width="0dp"
+                            android:layout_height="0dp"
+                            android:id="@+id/analogClock"
+                            android:dialTint="@color/primary_transparent"
+                            android:hand_hourTint="@color/accent_purple_dark_transparent"
+                            android:hand_minuteTint="@color/accent_blue_dark_transparent"
+                            android:hand_secondTint="@color/accent_red_dark_transparent"
+                            app:layout_constraintTop_toBottomOf="@id/iconClock"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            tools:targetApi="s" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -137,7 +289,7 @@
                     android:layout_width="match_parent"
                     android:layout_height="wrap_content"
                     android:background="@drawable/widget_background"
-                    app:layout_constraintTop_toBottomOf="@id/weatherContainer"
+                    app:layout_constraintTop_toBottomOf="@id/calendarContainer"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
@@ -243,14 +395,16 @@
                 <eightbitlab.com.blurview.BlurView
                     android:id="@+id/notesContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="2.1"
                     android:background="@drawable/widget_background"
                     app:layout_constraintTop_toBottomOf="@id/mediaContainer"
                     android:transitionName="notes"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="10dp"
+                    android:visibility="gone">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -304,20 +458,132 @@
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintHeight_max="150dp"
+                            android:layout_height="0dp"
                             android:id="@+id/desktopNoteRV"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/iconNotes"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toTopOf="@id/notespace"
                             android:layout_marginStart="5dp"
                             android:layout_marginEnd="5dp"/>
 
                         <Space
+                            android:id="@+id/notespace"
                             android:layout_width="match_parent"
                             android:layout_height="5dp"
-                            app:layout_constraintTop_toBottomOf="@id/desktopNoteRV"
                             app:layout_constraintBottom_toBottomOf="parent"/>
+
+                    </androidx.constraintlayout.widget.ConstraintLayout>
+
+                </eightbitlab.com.blurview.BlurView>
+
+                <eightbitlab.com.blurview.BlurView
+                    android:id="@+id/lastAppsContainer"
+                    android:layout_width="match_parent"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="2.1"
+                    android:background="@drawable/widget_background"
+                    app:layout_constraintTop_toBottomOf="@id/notesContainer"
+                    android:transitionName="notes"
+                    android:layout_marginTop="10dp"
+                    android:layout_marginStart="15dp"
+                    android:layout_marginEnd="15dp"
+                    android:layout_marginBottom="10dp">
+
+                    <androidx.constraintlayout.widget.ConstraintLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent">
+
+                        <ImageView
+                            android:layout_width="25dp"
+                            android:layout_height="25dp"
+                            android:id="@+id/iconLastApps"
+                            android:src="@drawable/ic_apps"
+                            app:layout_constraintTop_toTopOf="parent"
+                            app:layout_constraintStart_toStartOf="parent"
+                            android:layout_marginTop="10dp"
+                            android:layout_marginStart="10dp"/>
+
+                        <TextView
+                            android:id="@+id/lastAppsTitle"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:text="@string/last_applications"
+                            android:textColor="@color/white"
+                            android:fontFamily="@font/jost_regular"
+                            android:textSize="17sp"
+                            app:layout_constraintStart_toEndOf="@id/iconLastApps"
+                            app:layout_constraintTop_toTopOf="@id/iconLastApps"
+                            app:layout_constraintBottom_toBottomOf="@id/iconLastApps"
+                            android:layout_marginStart="10dp"/>
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:minWidth="75dp"
+                            android:maxWidth="150dp"
+                            android:layout_height="0dp"
+                            android:id="@+id/iconLast1"
+                            app:layout_constraintDimensionRatio="1:1"
+                            android:background="@drawable/button_background"
+                            android:src="@drawable/ic_apps"
+                            android:padding="10dp"
+                            app:layout_constraintTop_toBottomOf="@id/iconLastApps"
+                            app:layout_constraintStart_toStartOf="parent"
+                            app:layout_constraintEnd_toStartOf="@id/iconLast2"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginTop="10dp"
+                            tools:ignore="ContentDescription" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:minWidth="75dp"
+                            android:maxWidth="150dp"
+                            android:layout_height="0dp"
+                            android:id="@+id/iconLast2"
+                            app:layout_constraintDimensionRatio="1:1"
+                            android:background="@drawable/button_background"
+                            android:src="@drawable/ic_apps"
+                            android:padding="10dp"
+                            app:layout_constraintTop_toBottomOf="@id/iconLastApps"
+                            app:layout_constraintStart_toEndOf="@id/iconLast1"
+                            app:layout_constraintEnd_toStartOf="@id/iconLast3"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginTop="10dp"
+                            tools:ignore="ContentDescription" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:minWidth="75dp"
+                            android:maxWidth="150dp"
+                            android:layout_height="0dp"
+                            android:id="@+id/iconLast3"
+                            app:layout_constraintDimensionRatio="1:1"
+                            android:background="@drawable/button_background"
+                            android:src="@drawable/ic_apps"
+                            android:padding="10dp"
+                            app:layout_constraintTop_toBottomOf="@id/iconLastApps"
+                            app:layout_constraintStart_toEndOf="@id/iconLast2"
+                            app:layout_constraintEnd_toStartOf="@id/iconLast4"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginTop="10dp"
+                            tools:ignore="ContentDescription" />
+
+                        <ImageView
+                            android:layout_width="wrap_content"
+                            android:minWidth="75dp"
+                            android:maxWidth="150dp"
+                            android:layout_height="0dp"
+                            android:id="@+id/iconLast4"
+                            app:layout_constraintDimensionRatio="1:1"
+                            android:background="@drawable/button_background"
+                            android:src="@drawable/ic_apps"
+                            android:padding="10dp"
+                            app:layout_constraintTop_toBottomOf="@id/iconLastApps"
+                            app:layout_constraintStart_toEndOf="@id/iconLast3"
+                            app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
+                            android:layout_marginTop="10dp"
+                            tools:ignore="ContentDescription" />
 
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
@@ -326,14 +592,16 @@
                 <eightbitlab.com.blurview.BlurView
                     android:id="@+id/contactsContainer"
                     android:layout_width="match_parent"
-                    android:layout_height="wrap_content"
+                    android:layout_height="0dp"
+                    app:layout_constraintDimensionRatio="2.1"
                     android:background="@drawable/widget_background"
                     app:layout_constraintTop_toBottomOf="@id/notesContainer"
                     android:transitionName="notes"
                     android:layout_marginTop="10dp"
                     android:layout_marginStart="15dp"
                     android:layout_marginEnd="15dp"
-                    android:layout_marginBottom="10dp">
+                    android:layout_marginBottom="10dp"
+                    android:visibility="gone">
 
                     <androidx.constraintlayout.widget.ConstraintLayout
                         android:layout_width="match_parent"
@@ -365,12 +633,12 @@
 
                         <androidx.recyclerview.widget.RecyclerView
                             android:layout_width="0dp"
-                            android:layout_height="wrap_content"
-                            app:layout_constraintHeight_max="150dp"
+                            android:layout_height="0dp"
                             android:id="@+id/desktopContactRV"
                             app:layout_constraintStart_toStartOf="parent"
                             app:layout_constraintTop_toBottomOf="@id/iconContact"
                             app:layout_constraintEnd_toEndOf="parent"
+                            app:layout_constraintBottom_toBottomOf="parent"
                             android:layout_marginTop="10dp"
                             android:layout_marginEnd="10dp"
                             android:layout_marginStart="10dp"/>
@@ -378,11 +646,6 @@
                     </androidx.constraintlayout.widget.ConstraintLayout>
 
                 </eightbitlab.com.blurview.BlurView>
-
-                <Space
-                    android:layout_width="match_parent"
-                    android:layout_height="110dp"
-                    app:layout_constraintTop_toBottomOf="@id/contactsContainer"/>
 
             </androidx.constraintlayout.widget.ConstraintLayout>
 
