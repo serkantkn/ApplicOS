@@ -31,6 +31,7 @@ import androidx.core.view.ViewCompat;
 
 import com.bumptech.glide.Glide;
 import com.google.android.material.bottomsheet.BottomSheetBehavior;
+import com.orhanobut.hawk.Hawk;
 import com.serkantken.applicos.R;
 import com.serkantken.applicos.clockalarm.ClockMainActivity;
 import com.serkantken.applicos.databinding.ActivityMainBinding;
@@ -64,6 +65,7 @@ public class MainActivity extends AppCompatActivity {
         getWindow().setFlags(WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS, WindowManager.LayoutParams.FLAG_LAYOUT_NO_LIMITS);
 
         database = SettingsDatabase.getInstance(this);
+        Hawk.init(this).build();
 
         installedApps = getInstalledApps();
         initializeDock();
@@ -71,30 +73,26 @@ public class MainActivity extends AppCompatActivity {
         binding.pageViewer.setAdapter(adapter);
 
         binding.icon1.setOnClickListener(v -> {
-            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(database.getStringPreference("dockIcons", "dockIcon1_package"));
-            if (launchAppIntent != null)
-            {
+            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(Hawk.get("dockIcon1"));
+            if (launchAppIntent != null) {
                 startActivity(launchAppIntent);
             }
         });
         binding.icon2.setOnClickListener(v -> {
-            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(database.getStringPreference("dockIcons", "dockIcon2_package"));
-            if (launchAppIntent != null)
-            {
+            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(Hawk.get("dockIcon2"));
+            if (launchAppIntent != null) {
                 startActivity(launchAppIntent);
             }
         });
         binding.icon3.setOnClickListener(v -> {
-            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(database.getStringPreference("dockIcons", "dockIcon3_package"));
-            if (launchAppIntent != null)
-            {
+            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(Hawk.get("dockIcon3"));
+            if (launchAppIntent != null) {
                 startActivity(launchAppIntent);
             }
         });
         binding.icon4.setOnClickListener(v -> {
-            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(database.getStringPreference("dockIcons", "dockIcon4_package"));
-            if (launchAppIntent != null)
-            {
+            Intent launchAppIntent = getPackageManager().getLaunchIntentForPackage(Hawk.get("dockIcon4"));
+            if (launchAppIntent != null) {
                 startActivity(launchAppIntent);
             }
         });
@@ -144,9 +142,17 @@ public class MainActivity extends AppCompatActivity {
             bottomSheetBehavior.setPeekHeight(250);
         }
 
-        String package1 = database.getStringPreference("dockIcons", "dockIcon1");
-        String package2 = database.getStringPreference("dockIcons", "dockIcon2");
-        String package3 = database.getStringPreference("dockIcons", "dockIcon3");
+        String package1 = "", package2 = "", package3 = "", package4 = "";
+        if (Hawk.contains("dockIcon1")) {
+            package1 = Hawk.get("dockIcon1");
+        } else if (Hawk.contains("dockIcon2")){
+            package2 = Hawk.get("dockIcon2");
+        } else if (Hawk.contains("dockIcon3")){
+            package3 = Hawk.get("dockIcon3");
+        } else if (Hawk.contains("dockIcon4")){
+            package4 = Hawk.get("dockIcon4");
+        }
+
         for (AppModel model : installedApps)
         {
             if (package1.equals(model.getPackageName())) {
@@ -155,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
                 Glide.with(this).load(model.getImage()).into(binding.icon2);
             } else if (package3.equals(model.getPackageName())) {
                 Glide.with(this).load(model.getImage()).into(binding.icon3);
-            } else {
+            } else if (package4.equals(model.getPackageName())){
                 Glide.with(this).load(model.getImage()).into(binding.icon4);
             }
         }
@@ -297,23 +303,29 @@ public class MainActivity extends AppCompatActivity {
 
     public void setDockIcons(List<AppModel> list, AppModel selected)
     {
-        String package1 = database.getStringPreference("dockIcons", "dockIcon1");
-        String package2 = database.getStringPreference("dockIcons", "dockIcon2");
-        String package3 = database.getStringPreference("dockIcons", "dockIcon3");
-        String package4 = database.getStringPreference("dockIcons", "dockIcon4");
+        String package1 = "", package2 = "", package3 = "", package4 = "";
+        if (Hawk.contains("dockIcon1")) {
+            package1 = Hawk.get("dockIcon1");
+        } else if (Hawk.contains("dockIcon2")){
+            package2 = Hawk.get("dockIcon2");
+        } else if (Hawk.contains("dockIcon3")){
+            package3 = Hawk.get("dockIcon3");
+        } else if (Hawk.contains("dockIcon4")){
+            package4 = Hawk.get("dockIcon4");
+        }
 
         if (list.contains(selected))
         {
             for (AppModel model : list)
             {
                 if (package1.equals(model.getPackageName())) {
-                    Glide.with(this).load(model.getImage()).into(binding.icon1);
+                    Glide.with(getApplicationContext()).load(model.getImage()).into(binding.icon1);
                 } else if (package2.equals(model.getPackageName())) {
-                    Glide.with(this).load(model.getImage()).into(binding.icon2);
+                    Glide.with(getApplicationContext()).load(model.getImage()).into(binding.icon2);
                 } else if (package3.equals(model.getPackageName())) {
-                    Glide.with(this).load(model.getImage()).into(binding.icon3);
+                    Glide.with(getApplicationContext()).load(model.getImage()).into(binding.icon3);
                 } else if (package4.equals(model.getPackageName())){
-                    Glide.with(this).load(model.getImage()).into(binding.icon4);
+                    Glide.with(getApplicationContext()).load(model.getImage()).into(binding.icon4);
                 }
             }
         }

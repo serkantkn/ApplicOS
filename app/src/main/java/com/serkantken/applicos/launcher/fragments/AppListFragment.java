@@ -16,6 +16,7 @@ import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.fragment.app.Fragment;
 import androidx.recyclerview.widget.StaggeredGridLayoutManager;
 
+import com.orhanobut.hawk.Hawk;
 import com.serkantken.applicos.R;
 import com.serkantken.applicos.Utils;
 import com.serkantken.applicos.databinding.FragmentAppListBinding;
@@ -29,6 +30,7 @@ import com.serkantken.applicos.settings.database.SettingsDatabase;
 import java.util.ArrayList;
 import java.util.Comparator;
 import java.util.List;
+import java.util.Objects;
 
 public class AppListFragment extends Fragment implements PopupMenu.OnMenuItemClickListener
 {
@@ -49,6 +51,7 @@ public class AppListFragment extends Fragment implements PopupMenu.OnMenuItemCli
         requireActivity().setTheme(R.style.Theme_ApplicOS);
 
         database = SettingsDatabase.getInstance(requireContext());
+        Hawk.init(requireContext()).build();
 
         //appList = getInstalledApps();
         appList.sort(Comparator.comparing(AppModel::getName));
@@ -114,12 +117,15 @@ public class AppListFragment extends Fragment implements PopupMenu.OnMenuItemCli
         switch (item.getItemId())
         {
             case R.id.pin_to_dock:
-                database.editStringPreference("dockIcons", "dockIcon4", database.getStringPreference("dockIcons", "dockIcon3"));
-                database.editStringPreference("dockIcons", "dockIcon3", database.getStringPreference("dockIcons", "dockIcon2"));
-                database.editStringPreference("dockIcons", "dockIcon2", database.getStringPreference("dockIcons", "dockIcon1"));
-                database.editStringPreference("dockIcons", "dockIcon1", selectedModel.getPackageName());
-                MainActivity mainActivity = new MainActivity();
-                mainActivity.setDockIcons(appList, selectedModel);
+                if (Hawk.contains( "dockIcon3")){
+                    Hawk.put("dockIcon4", Hawk.get("dockIcon3"));
+                } else if (Hawk.contains("dockIcon2")){
+                    Hawk.put("dockIcon3", Hawk.get("dockIcon2"));
+                } else if (Hawk.contains("dockIcon1")){
+                    Hawk.put("dockIcon2", Hawk.get("dockIcon1"));
+                }
+
+                Hawk.put("dockIcon1", selectedModel.getPackageName());
                 return true;
             default:
                 return false;

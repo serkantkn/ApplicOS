@@ -3,6 +3,7 @@ package com.serkantken.applicos.settings.database;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
+import android.speech.tts.TextToSpeech;
 
 public class SettingsDatabase
 {
